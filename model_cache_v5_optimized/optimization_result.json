@@ -1,0 +1,28 @@
+{
+  "optimizations": [
+    {
+      "id": "OPT-001",
+      "name": "\u878d\u5408\u6743\u91cd",
+      "change": "XGB 35% LGB 35% CAT 30%"
+    },
+    {
+      "id": "OPT-002",
+      "name": "\u8bad\u7ec3\u76ee\u6807",
+      "change": "\u6da8\u5e45>=2%\uff08\u539f3%\uff09"
+    },
+    {
+      "id": "OPT-003",
+      "name": "\u4e70\u5165\u9608\u503c",
+      "change": "\u6700\u4f7335\u5206"
+    },
+    {
+      "id": "OPT-004",
+      "name": "\u6210\u529f\u6807\u51c6",
+      "change": "\u6da8\u5e45>=2%\uff08\u539f3%\uff09"
+    }
+  ],
+  "best_threshold": 35,
+  "win_rate": 49.44,
+  "target_achieved": false,
+  "timestamp": "2026-04-23T20:46:52.265562"
+}

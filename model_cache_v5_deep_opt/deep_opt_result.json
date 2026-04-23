@@ -1,0 +1,15 @@
+{
+  "optimizations": [
+    "\u8bad\u7ec3\u6570\u636e\u6269\u5c55\u52302020\u5e74",
+    "\u589e\u5f3a\u7279\u5f81(\u52a8\u91cf+\u6210\u4ea4\u91cf+\u4f4d\u7f6e)",
+    "\u6a21\u578b\u53c2\u6570\u4f18\u5316(150\u8fed\u4ee3/5\u6df1\u5ea6)",
+    "\u878d\u5408\u6743\u91cdXGB35/LGB35/CAT30",
+    "\u8bad\u7ec3\u76ee\u6807\u6da8\u5e45>=2%"
+  ],
+  "best_threshold": 40,
+  "win_rate": 41.8,
+  "original": 44.2,
+  "improvement": -2.4,
+  "target_60": false,
+  "timestamp": "2026-04-23T20:49:16.479241"
+}
