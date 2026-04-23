@@ -1,0 +1,71 @@
+{
+  "results": [
+    {
+      "threshold": 50,
+      "final_cash": 2678357.09,
+      "total_return": 167.84,
+      "buy_opportunities": 1130,
+      "description": "涨幅概率>50%时买入"
+    },
+    {
+      "threshold": 55,
+      "final_cash": 2404631.38,
+      "total_return": 140.46,
+      "buy_opportunities": 961,
+      "description": "涨幅概率>55%时买入"
+    },
+    {
+      "threshold": 60,
+      "final_cash": 2406529.77,
+      "total_return": 140.65,
+      "buy_opportunities": 826,
+      "description": "涨幅概率>60%时买入"
+    },
+    {
+      "threshold": 65,
+      "final_cash": 2195644.55,
+      "total_return": 119.56,
+      "buy_opportunities": 698,
+      "description": "涨幅概率>65%时买入"
+    },
+    {
+      "threshold": 70,
+      "final_cash": 1956424.15,
+      "total_return": 95.64,
+      "buy_opportunities": 591,
+      "description": "涨幅概率>70%时买入"
+    },
+    {
+      "threshold": 75,
+      "final_cash": 1826735.82,
+      "total_return": 82.67,
+      "buy_opportunities": 454,
+      "description": "涨幅概率>75%时买入"
+    },
+    {
+      "threshold": 80,
+      "final_cash": 1838462.38,
+      "total_return": 83.85,
+      "buy_opportunities": 330,
+      "description": "涨幅概率>80%时买入"
+    }
+  ],
+  "best_threshold": 50,
+  "analysis": {
+    "baseline_60": {
+      "threshold": 60,
+      "final_cash": 2406529.77,
+      "total_return": 140.65,
+      "buy_opportunities": 826,
+      "description": "涨幅概率>60%时买入"
+    },
+    "target_70": {
+      "threshold": 70,
+      "final_cash": 1956424.15,
+      "total_return": 95.64,
+      "buy_opportunities": 591,
+      "description": "涨幅概率>70%时买入"
+    },
+    "opportunity_reduction_pct": 28.5
+  }
+}

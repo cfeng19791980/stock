@@ -1,0 +1,19 @@
+{
+  "total_return": 128.27077200000014,
+  "win_rate": 50.0,
+  "max_drawdown": 85.67352765186321,
+  "sharpe": 0.8836851808207266,
+  "stop_loss_count": 19,
+  "stop_profit_count": 10,
+  "config": {
+    "BUY_THRESHOLD": 55,
+    "SELL_THRESHOLD": 15,
+    "STOP_LOSS": 0.1,
+    "STOP_PROFIT": 0.25,
+    "BUY_RATIO": 0.2,
+    "TOP_COUNT": 5,
+    "INITIAL_CAPITAL": 1000000,
+    "START_DATE": "2025-01-01",
+    "END_DATE": "2026-04-18"
+  }
+}

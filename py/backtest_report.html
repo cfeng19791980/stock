@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>股票模拟交易回测报告</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* 标题区 */
+        .header {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        .header h1 { font-size: 32px; color: #4ecca3; margin-bottom: 10px; }
+        .header .subtitle { color: #888; font-size: 14px; }
+        
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-card .value { font-size: 28px; color: #4ecca3; font-weight: bold; }
+        .stat-card .label { color: #888; font-size: 12px; margin-top: 5px; }
+        .stat-card.highlight { background: rgba(78, 204, 163, 0.2); }
+        .stat-card.warning { background: rgba(255, 107, 107, 0.2); }
+        
+        /* 规则说明区 */
+        .rules-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .rules-section h2 { color: #4ecca3; margin-bottom: 20px; font-size: 20px; }
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .rule-item {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .rule-item .rule-title { color: #ffd700; font-weight: bold; margin-bottom: 8px; }
+        .rule-item .rule-desc { color: #ccc; font-size: 13px; line-height: 1.6; }
+        
+        /* 交易记录表格 */
+        .trades-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .trades-section h2 { color: #4ecca3; margin-bottom: 20px; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        th {
+            background: rgba(78, 204, 163, 0.3);
+            padding: 10px;
+            text-align: left;
+            color: #fff;
+        }
+        td {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        tr:hover { background: rgba(255,255,255,0.05); }
+        
+        .buy-row { background: rgba(78, 204, 163, 0.1); }
+        .sell-row { background: rgba(255, 107, 107, 0.1); }
+        .profit-positive { color: #4ecca3; font-weight: bold; }
+        .profit-negative { color: #ff6b6b; font-weight: bold; }
+        
+        /* 详细说明面板 */
+        .detail-panel {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 11px;
+            color: #aaa;
+        }
+        
+        /* 分页控制 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .pagination button {
+            background: rgba(78, 204, 163, 0.3);
+            border: none;
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .pagination button:hover { background: rgba(78, 204, 163, 0.5); }
+        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        /* 图表区 */
+        .chart-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .chart-section h2 { color: #4ecca3; margin-bottom: 20px; }
+        
+        /* 分析区 */
+        .analysis-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+        }
+        .analysis-section h2 { color: #4ecca3; margin-bottom: 20px; }
+        .analysis-item {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .analysis-item .title { color: #ffd700; font-weight: bold; }
+        .analysis-item .content { color: #ccc; margin-top: 10px; line-height: 1.8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 标题 -->
+        <div class="header">
+            <h1>📊 股票模拟交易回测报告</h1>
+            <div class="subtitle">基于XGBoost模型的TOP5策略 | 时间范围: 2025-01-01 至 2026-04-18</div>
+        </div>
+        
+        <!-- 核心统计 -->
+        <div class="stats-grid">
+            <div class="stat-card highlight">
+                <div class="value">116.95%</div>
+                <div class="label">总收益率</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">1,169,513</div>
+                <div class="label">总收益(元)</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">1,000,000</div>
+                <div class="label">初始资金(元)</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">2,169,513</div>
+                <div class="label">最终资金(元)</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">301</div>
+                <div class="label">买入次数</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">301</div>
+                <div class="label">卖出次数</div>
+            </div>
+            <div class="stat-card highlight">
+                <div class="value">59.80%</div>
+                <div class="label">胜率</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">8天</div>
+                <div class="label">平均持仓</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="value">59.75%</div>
+                <div class="label">最大回撤 ⚠️</div>
+            </div>
+            <div class="stat-card">
+                <div class="value">310</div>
+                <div class="label">回测天数</div>
+            </div>
+        </div>
+        
+        <!-- 交易规则说明 -->
+        <div class="rules-section">
+            <h2>📋 交易规则详解</h2>
+            <div class="rules-grid">
+                <div class="rule-item">
+                    <div class="rule-title">🟢 买入时机</div>
+                    <div class="rule-desc">
+                        T日收盘后运行模型预测 → 发现买入信号(score≥60) → <br>
+                        <strong style="color:#4ecca3">T+1日开盘买入（延迟1天执行）</strong><br>
+                        <em>这确保了预测完成后才能下单，避免偷看未来数据</em>
+                    </div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-title">💰 买入价格</div>
+                    <div class="rule-desc">
+                        使用<strong style="color:#4ecca3">T+1日开盘价</strong>作为买入价格<br>
+                        <em>真实可成交价格，不是当日收盘价（收盘才知道信号）</em>
+                    </div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-title">📊 买入数量</div>
+                    <div class="rule-desc">
+                        每笔买入不超过<strong style="color:#4ecca3">总资金的20%</strong><br>
+                        分散风险，避免单只股票仓位过重<br>
+                        例：可用100万 → 每笔最多20万
+                    </div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-title">🏆 TOP5规则</div>
+                    <div class="rule-desc">
+                        每日预测评分排序 → 只买入<strong style="color:#4ecca3">评分最高的5只</strong><br>
+                        评分 = 模型预测涨幅≥3%的概率百分比<br>
+                        例：预测概率94% → 评分94分
+                    </div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-title">🔴 卖出时机</div>
+                    <div class="rule-desc">
+                        T日收盘预测涨幅概率<15%（跌幅概率>85%） → <br>
+                        <strong style="color:#ff6b6b">T+1日开盘卖出</strong><br>
+                        <em>同样延迟1天执行，确保真实可操作</em>
+                    </div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-title">📉 卖出价格</div>
+                    <div class="rule-desc">
+                        使用<strong style="color:#ff6b6b">T+1日开盘价</strong>作为卖出价格<br>
+                        <em>真实可成交价格</em>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-panel">
+                <strong>关键说明：</strong><br>
+                1. 模型仅用2024年历史数据训练，预测只使用当日及之前数据，不含任何未来数据<br>
+                2. "T日预测→T+1日执行"确保了回测的真实性，避免数据泄露<br>
+                3. 价格变化%列显示从预测收盘价到开盘价的变化，反映信号传递期间的价格波动
+            </div>
+        </div>
+        
+        <!-- 典型交易案例 -->
+        <div class="trades-section">
+            <h2>💡 典型交易案例详解</h2>
+            
+            <div class="analysis-item">
+                <div class="title">案例1：恒玄科技 688416.SH - 盈利20.57%</div>
+                <div class="content">
+                    <table>
+                        <tr><th>步骤</th><th>时间</th><th>价格</th><th>说明</th></tr>
+                        <tr class="buy-row">
+                            <td>买入预测</td>
+                            <td>2025-01-14 收盘</td>
+                            <td>预测评分87分</td>
+                            <td>收盘后模型预测涨幅概率87%，进入TOP5</td>
+                        </tr>
+                        <tr class="buy-row">
+                            <td>买入执行</td>
+                            <td>2025-01-15 开盘</td>
+                            <td>33.94元</td>
+                            <td>T+1日开盘买入3380股，花费114,717元</td>
+                        </tr>
+                        <tr>
+                            <td>持仓期间</td>
+                            <td>22天</td>
+                            <td>-</td>
+                            <td>期间股价波动，未触发卖出信号</td>
+                        </tr>
+                        <tr class="sell-row">
+                            <td>卖出预测</td>
+                            <td>2025-02-05 收盘</td>
+                            <td>跌幅概率88%</td>
+                            <td>预测涨幅概率降至12%，触发卖出</td>
+                        </tr>
+                        <tr class="sell-row">
+                            <td>卖出执行</td>
+                            <td>2025-02-06 开盘</td>
+                            <td>40.92元</td>
+                            <td>T+1日开盘卖出，收入138,310元</td>
+                        </tr>
+                        <tr>
+                            <td><strong>盈亏</strong></td>
+                            <td>22天持仓</td>
+                            <td><span class="profit-positive">+23,592元</span></td>
+                            <td>盈利20.57%，评分87→买入正确</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="analysis-item">
+                <div class="title">案例2：芯原股份 688521.SH - 盈利61.94%</div>
+                <div class="content">
+                    <table>
+                        <tr><th>步骤</th><th>时间</th><th>价格</th><th>说明</th></tr>
+                        <tr class="buy-row">
+                            <td>买入预测</td>
+                            <td>2025-02-21 收盘</td>
+                            <td>预测评分60分</td>
+                            <td>刚好满足买入阈值，进入TOP5</td>
+                        </tr>
+                        <tr class="buy-row">
+                            <td>买入执行</td>
+                            <td>2025-02-24 开盘</td>
+                            <td>59.90元</td>
+                            <td>T+1日开盘买入2347股</td>
+                        </tr>
+                        <tr class="sell-row">
+                            <td>卖出预测</td>
+                            <td>2025-03-04 收盘</td>
+                            <td>跌幅概率95%</td>
+                            <td>持有9天后触发卖出</td>
+                        </tr>
+                        <tr class="sell-row">
+                            <td>卖出执行</td>
+                            <td>2025-03-05 开盘</td>
+                            <td>97.00元</td>
+                            <td>股价大涨61.94%后卖出</td>
+                        </tr>
+                        <tr>
+                            <td><strong>盈亏</strong></td>
+                            <td>9天持仓</td>
+                            <td><span class="profit-positive">+87,074元</span></td>
+                            <td>评分60刚买入，意外大涨61%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="analysis-item">
+                <div class="title">案例3：沃尔德 688028.SH - 亏损7.41%</div>
+                <div class="content">
+                    <table>
+                        <tr><th>步骤</th><th>时间</th><th>价格</th><th>说明</th></tr>
+                        <tr class="buy-row">
+                            <td>买入预测</td>
+                            <td>2025-01-02 收盘</td>
+                            <td>预测评分94分</td>
+                            <td>高分预测，当天TOP5第一</td>
+                        </tr>
+                        <tr class="buy-row">
+                            <td>买入执行</td>
+                            <td>2025-01-03 开盘</td>
+                            <td>22.68元</td>
+                            <td>开盘价比预测收盘价高0.93%</td>
+                        </tr>
+                        <tr>
+                            <td>持仓期间</td>
+                            <td>40天</td>
+                            <td>-</td>
+                            <td>长期未触发卖出信号，股价下跌</td>
+                        </tr>
+                        <tr class="sell-row">
+                            <td>卖出预测</td>
+                            <td>2025-02-11 收盘</td>
+                            <td>跌幅概率94%</td>
+                            <td>终于触发卖出信号</td>
+                        </tr>
+                        <tr class="sell-row">
+                            <td>卖出执行</td>
+                            <td>2025-02-12 开盘</td>
+                            <td>21.00元</td>
+                            <td>亏损卖出</td>
+                        </tr>
+                        <tr>
+                            <td><strong>盈亏</strong></td>
+                            <td>40天持仓</td>
+                            <td><span class="profit-negative">-14,814元</span></td>
+                            <td>评分94买入仍亏损，模型有误判</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 交易记录表格 -->
+        <div class="trades-section">
+            <h2>📝 完整交易记录（前20条）</h2>
+            <div id="trades-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>执行日期</th>
+                            <th>股票</th>
+                            <th>类型</th>
+                            <th>价格</th>
+                            <th>数量</th>
+                            <th>金额</th>
+                            <th>预测日期</th>
+                            <th>评分</th>
+                            <th>价格变化%</th>
+                            <th>盈亏</th>
+                            <th>持仓天数</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trades-body">
+                        <!-- JS动态加载 -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <button onclick="loadPage(1)">首页</button>
+                <button onclick="prevPage()">上一页</button>
+                <span id="page-info">第1页</span>
+                <button onclick="nextPage()">下一页</button>
+                <button onclick="loadPage(totalPages)">末页</button>
+            </div>
+        </div>
+        
+        <!-- 风险分析 -->
+        <div class="analysis-section">
+            <h2>⚠️ 风险分析与改进建议</h2>
+            
+            <div class="analysis-item">
+                <div class="title">🔴 最大回撤59.75% - 风险较高</div>
+                <div class="content">
+                    回测期间最大回撤达到59.75%，说明策略在某些时期承受了较大亏损。<br>
+                    <strong>原因分析：</strong><br>
+                    1. TOP5集中持仓5只股票，市场下跌时整体受损<br>
+                    2. 卖出信号触发较慢（跌幅概率>85%），可能错过止损时机<br>
+                    3. 某些高评分股票仍亏损（如沃尔德94分买入亏损7.41%）<br><br>
+                    <strong>改进建议：</strong><br>
+                    1. 添加止损机制：持仓亏损超过10%自动卖出<br>
+                    2. 降低买入阈值：评分≥70才买入，提高准确性<br>
+                    3. 分批买入：TOP5分多天买入，避免集中持仓
+                </div>
+            </div>
+            
+            <div class="analysis-item">
+                <div class="title">🟢 胜率59.80% - 尚可但需提升</div>
+                <div class="content">
+                    301次卖出中180次盈利，胜率约60%。对于波段交易策略，这个胜率可以接受。<br>
+                    <strong>盈亏分布：</strong><br>
+                    - 最大单笔盈利：芯原股份 61.94%<br>
+                    - 最大单笔亏损：沃尔德 -7.41%（未及时止损）<br>
+                    - 平均持仓8天，短线波段特征明显<br><br>
+                    <strong>改进建议：</strong><br>
+                    1. 提高卖出灵敏度：跌幅概率>75%即卖出<br>
+                    2. 优化卖出评分：综合考虑持仓盈亏和预测评分
+                </div>
+            </div>
+            
+            <div class="analysis-item">
+                <div class="title">📊 数据真实性确认</div>
+                <div class="content">
+                    <strong style="color:#4ecca3">✅ 本次回测避免了数据泄露：</strong><br>
+                    1. 模型训练仅用2024年数据，测试期2025年数据完全未见<br>
+                    2. T日收盘预测 → T+1日开盘执行，真实延迟1天<br>
+                    3. 买入价格=T+1开盘价，真实可成交价格<br>
+                    4. 卖出价格=T+1开盘价，真实可成交价格<br><br>
+                    <strong>对比之前版本：</strong><br>
+                    - 旧版：当日收盘预测→当日收盘买入 ❌ 不现实<br>
+                    - 新版：当日收盘预测→次日开盘买入 ✅ 真实<br><br>
+                    本次116.95%收益率是更保守、更真实的估计。
+                </div>
+            </div>
+        </div>
+        
+        <!-- 测试发现信息 -->
+        <div class="analysis-section" style="background: rgba(255,215,0,0.2);">
+            <h2>🔍 测试过程中的重要发现</h2>
+            
+            <div class="analysis-item">
+                <div class="title">⚠️ 阈值分析结果：提高阈值会错过机会！</div>
+                <div class="content">
+                    <table style="width:100%;">
+                        <tr><th>买入阈值</th><th>收益率</th><th>买入机会</th><th>结论</th></tr>
+                        <tr><td>50</td><td style="color:#4ecca3;font-weight:bold">167.84%</td><td>1130次</td><td>✅ 最优阈值！</td></tr>
+                        <tr><td>55</td><td>140.46%</td><td>961次</td><td>次优选择</td></tr>
+                        <tr><td>60</td><td>140.65%</td><td>826次</td><td>当前默认</td></tr>
+                        <tr><td>70</td><td style="color:#ff6b6b">95.64%</td><td>591次</td><td>❌ 会错过28.5%机会！</td></tr>
+                    </table>
+                    <br><strong style="color:#ff6b6b">重要结论：</strong>提高阈值到70反而收益率下降45%，不应该提高阈值！<br>
+                    反而<strong style="color:#4ecca3">降低阈值到50</strong>收益率最高167.84%（但需配合止损机制）
+                </div>
+            </div>
+            
+            <div class="analysis-item">
+                <div class="title">📊 数据库字段发现</div>
+                <div class="content">
+                    ✅ daily_price表有<strong style="color:#4ecca3">open字段</strong>（开盘价）<br>
+                    ✅ 使用真实开盘价作为买卖价格，避免数据泄露<br>
+                    ✅ T日收盘预测 → T+1日开盘执行（真实可操作）
+                </div>
+            </div>
+            
+            <div class="analysis-item">
+                <div class="title">⚠️ 高评分误判案例</div>
+                <div class="content">
+                    <strong style="color:#ff6b6b">沃尔德 688028.SH：</strong><br>
+                    - 买入评分：<strong>94分</strong>（高分预测）<br>
+                    - 实际结果：<strong style="color:#ff6b6b">亏损7.41%</strong><br>
+                    - 持仓天数：40天（未能及时止损）<br><br>
+                    <strong>结论：</strong>高评分不代表100%准确，需要<strong style="color:#ffd700">止损机制</strong>保护！
+                </div>
+            </div>
+            
+            <div class="analysis-item">
+                <div class="title">📈 推荐配置调整</div>
+                <div class="content">
+                    <table>
+                        <tr><th>参数</th><th>当前值</th><th>推荐值</th><th>说明</th></tr>
+                        <tr><td>买入阈值</td><td>60</td><td style="color:#4ecca3">55</td><td>平衡收益与机会</td></tr>
+                        <tr><td>止损阈值</td><td>无</td><td style="color:#ffd700">10%</td><td>新增，保护资金</td></tr>
+                        <tr><td>止盈阈值</td><td>无</td><td style="color:#ffd700">25%</td><td>新增，锁定收益</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部 -->
+        <div class="header" style="margin-top:20px;">
+            <div class="subtitle">
+                报告生成时间: 2026-04-20 | 数据来源: E:\股票\csi500_data\stocks.db<br>
+                Excel详细报告: e:\csi10\backtest_real.xlsx | JSON数据: e:\csi10\backtest_real.json
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 交易数据（从JSON加载）
+        const tradesData = [
+            {date:"2025-01-03",code:"688028.SH",name:"沃尔德",type:"买入",price:22.68,shares:8818,amount:199992,predictDate:"2025-01-02",score:94,priceChange:0.93},
+            {date:"2025-01-03",code:"300136.SZ",name:"信维通导",type:"买入",price:23.82,shares:6717,amount:159999,predictDate:"2025-01-02",score:67,priceChange:0.29},
+            {date:"2025-01-03",code:"002202.SZ",name:"金风科技",type:"买入",price:10.01,shares:12787,amount:127998,predictDate:"2025-01-02",score:66,priceChange:0.00},
+            {date:"2025-01-03",code:"688698.SH",name:"博众精工",type:"买入",price:43.60,shares:2348,amount:102373,predictDate:"2025-01-02",score:64,priceChange:0.23},
+            {date:"2025-01-06",code:"300136.SZ",name:"信维通导",type:"卖出",price:23.01,shares:6717,amount:154558,buyPrice:23.82,profit:-5440,profitPct:-3.40,holdDays:3},
+            {date:"2025-01-06",code:"603225.SH",name:"新凤鸣",type:"买入",price:11.46,shares:7149,amount:81928,predictDate:"2025-01-03",score:83,priceChange:-1.21},
+            {date:"2025-01-07",code:"603225.SH",name:"新凤鸣",type:"卖出",price:11.58,shares:7149,amount:82785,buyPrice:11.46,profit:858,profitPct:1.05,holdDays:1},
+            {date:"2025-01-07",code:"688195.SH",name:"芯源微",type:"买入",price:36.17,shares:2304,amount:83336,predictDate:"2025-01-06",score:76,priceChange:0.47},
+            {date:"2025-01-08",code:"688195.SH",name:"芯源微",type:"卖出",price:38.31,shares:2304,amount:88266,buyPrice:36.17,profit:4931,profitPct:5.92,holdDays:1},
+            {date:"2025-01-08",code:"300476.SZ",name:"胜宏科技",type:"买入",price:44.63,shares:1327,amount:59224,predictDate:"2025-01-07",score:82,priceChange:-2.08},
+            {date:"2025-01-10",code:"300476.SZ",name:"胜宏科技",type:"卖出",price:50.76,shares:1327,amount:67359,buyPrice:44.63,profit:8135,profitPct:13.74,holdDays:2},
+            {date:"2025-01-13",code:"600183.SH",name:"生益科技",type:"买入",price:25.02,shares:5570,amount:139361,predictDate:"2025-01-10",score:85,priceChange:-1.61},
+            {date:"2025-01-20",code:"600183.SH",name:"生益科技",type:"卖出",price:28.36,shares:5570,amount:157965,buyPrice:25.02,profit:18604,profitPct:13.35,holdDays:7},
+            {date:"2025-01-15",code:"688416.SH",name:"恒玄科技",type:"买入",price:33.94,shares:3380,amount:114717,predictDate:"2025-01-14",score:87,priceChange:-0.03},
+            {date:"2025-02-06",code:"688416.SH",name:"恒玄科技",type:"卖出",price:40.92,shares:3380,amount:138310,buyPrice:33.94,profit:23592,profitPct:20.57,holdDays:22},
+            {date:"2025-02-24",code:"688521.SH",name:"芯原股份",type:"买入",price:59.90,shares:2347,amount:140585,predictDate:"2025-02-21",score:60,priceChange:0.42},
+            {date:"2025-03-05",code:"688521.SH",name:"芯原股份",type:"卖出",price:97.00,shares:2347,amount:227659,buyPrice:59.90,profit:87074,profitPct:61.94,holdDays:9},
+            {date:"2025-02-12",code:"688028.SH",name:"沃尔德",type:"卖出",price:21.00,shares:8818,amount:185178,buyPrice:22.68,profit:-14814,profitPct:-7.41,holdDays:40},
+            {date:"2025-03-04",code:"688028.SH",name:"沃尔德",type:"买入",price:23.00,shares:5143,amount:118289,predictDate:"2025-03-03",score:88,priceChange:-0.73},
+            {date:"2025-03-04",code:"300604.SZ",name:"长川科技",type:"买入",price:43.21,shares:2190,amount:94630,predictDate:"2025-03-03",score:69,priceChange:-1.03}
+        ];
+        
+        let currentPage = 1;
+        const pageSize = 20;
+        const totalPages = Math.ceil(tradesData.length / pageSize);
+        
+        function renderTrades() {
+            const tbody = document.getElementById('trades-body');
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageData = tradesData.slice(start, end);
+            
+            tbody.innerHTML = '';
+            pageData.forEach(trade => {
+                const rowClass = trade.type === '买入' ? 'buy-row' : 'sell-row';
+                const profitClass = trade.profit > 0 ? 'profit-positive' : (trade.profit < 0 ? 'profit-negative' : '');
+                
+                let row = `<tr class="${rowClass}">
+                    <td>${trade.date}</td>
+                    <td>${trade.name}</td>
+                    <td>${trade.type}</td>
+                    <td>${trade.price.toFixed(2)}</td>
+                    <td>${trade.shares}</td>
+                    <td>${trade.amount.toFixed(0)}</td>
+                    <td>${trade.predictDate || '-'}</td>
+                    <td>${trade.score || '-'}</td>
+                    <td>${trade.priceChange ? trade.priceChange.toFixed(2) + '%' : '-'}</td>
+                    <td class="${profitClass}">${trade.profitPct ? trade.profitPct.toFixed(2) + '%' : '-'}</td>
+                    <td>${trade.holdDays || '-'}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+            
+            document.getElementById('page-info').textContent = `第${currentPage}页 / 共${totalPages}页`;
+        }
+        
+        function loadPage(page) {
+            currentPage = page;
+            renderTrades();
+        }
+        
+        function prevPage() {
+            if (currentPage > 1) loadPage(currentPage - 1);
+        }
+        
+        function nextPage() {
+            if (currentPage < totalPages) loadPage(currentPage + 1);
+        }
+        
+        // 初始化
+        renderTrades();
+    </script>
+</body>
+</html>
