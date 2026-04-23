@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-04-23T20:10:36.914174",
+  "period": "2025-01-01 ~ 2026-04-20",
+  "trades": 2005,
+  "win_rate": 35.46,
+  "avg_return": 1.65,
+  "max_return": 49.04,
+  "min_return": -27.12,
+  "max_drawdown": 94.51,
+  "sharpe": 1.99
+}
