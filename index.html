@@ -18,11 +18,11 @@
             --glass-bg: rgba(255,255,255,0.05);
             --glass-border: rgba(255,255,255,0.12);
         }
-        
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
+        body {
             font-family: 'Microsoft YaHei', Arial, sans-serif;
-            background: 
+            background:
                 linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0d0d1a 100%);
             background-attachment: fixed;
             min-height: 100vh;
@@ -30,13 +30,13 @@
             color: #fff;
             overflow-x: hidden;
         }
-        
+
         /* ===== 动态背景 ===== */
         body::before {
             content: '';
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 15% 75%, rgba(102,126,234,0.12) 0%, transparent 45%),
                 radial-gradient(circle at 85% 25%, rgba(118,75,162,0.12) 0%, transparent 45%),
                 radial-gradient(circle at 50% 50%, rgba(0,212,255,0.08) 0%, transparent 35%);
@@ -48,7 +48,7 @@
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.6; transform: scale(1.05); }
         }
-        
+
         /* 浮动光球效果 */
         body::after {
             content: '';
@@ -66,7 +66,7 @@
             50% { transform: translate(-20px, 100px) rotate(180deg); }
             75% { transform: translate(20px, 50px) rotate(270deg); }
         }
-        
+
         /* 玻璃卡片效果 */
         .glass-card {
             background: var(--glass-bg);
@@ -75,9 +75,9 @@
             border-radius: 16px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
-        
+
         .container { max-width: 1800px; margin: 0 auto; }
-        
+
         /* 头部 - 玻璃态+发光 */
         .header {
             text-align: center;
@@ -89,16 +89,16 @@
             border: 1px solid rgba(102,126,234,0.3);
             box-shadow: 0 8px 32px rgba(102,126,234,0.2);
         }
-        .header h1 { 
-            font-size: 28px; 
-            margin-bottom: 8px; 
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
             background: linear-gradient(135deg, #fff 0%, #00d4ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         .header .time-info { font-size: 13px; color: #888; }
-        
+
         /* 按钮 - 发光效果 */
         .btn {
             padding: 10px 20px;
@@ -123,27 +123,27 @@
             transition: left 0.5s;
         }
         .btn:hover::before { left: 100%; }
-        .btn:hover { 
-            transform: translateY(-2px); 
+        .btn:hover {
+            transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
         }
         .btn-sm { padding: 5px 12px; font-size: 12px; }
-        .btn-danger { 
+        .btn-danger {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
         }
         .btn-danger:hover { box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5); }
-        .btn-success { 
+        .btn-success {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
         .btn-success:hover { box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5); }
-        .btn-info { 
+        .btn-info {
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
         }
         .btn-info:hover { box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5); }
-        
+
         /* 持仓录入面板 - 玻璃态 */
         .input-panel {
             background: linear-gradient(135deg, rgba(102,126,234,0.15) 0%, rgba(118,75,162,0.15) 100%);
@@ -155,7 +155,7 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         }
         .input-header { font-size: 16px; font-weight: bold; margin-bottom: 12px; color: #00d4ff; }
-        
+
         .input-form {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr auto;
@@ -164,7 +164,7 @@
         }
         .input-group { display: flex; flex-direction: column; }
         .input-label { font-size: 11px; color: #888; margin-bottom: 4px; }
-        
+
         .input-field, select.input-field {
             padding: 8px 10px;
             background: rgba(255,255,255,0.15);
@@ -175,14 +175,14 @@
             min-height: 32px;
         }
         .input-field:focus { outline: none; border-color: #667eea; }
-        
+
         /* 下拉列表样式修复 */
         select.input-field option {
             background: #1a1a2e;
             color: #fff;
             padding: 8px;
         }
-        
+
         /* 持仓列表 - 玻璃态卡片 */
         .holdings-list {
             display: grid;
@@ -190,7 +190,7 @@
             gap: 12px;
             margin-top: 15px;
         }
-        
+
         .holding-card {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
@@ -220,7 +220,7 @@
         }
         .holding-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .holding-name { font-size: 14px; font-weight: bold; }
-        
+
         .holding-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -230,7 +230,7 @@
         .detail-item { background: rgba(0,0,0,0.15); padding: 6px 8px; border-radius: 4px; }
         .detail-label { color: #888; font-size: 10px; }
         .detail-value { color: #fff; font-size: 12px; }
-        
+
         .holding-advice {
             margin-top: 10px;
             padding: 8px;
@@ -239,7 +239,7 @@
             font-size: 12px;
             border-left: 3px solid #6366f1;
         }
-        
+
         /* 统计面板 - 玻璃态+动态边框 */
         .stats-panel {
             background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
@@ -270,7 +270,7 @@
             grid-template-columns: repeat(6, 1fr);
             gap: 15px;
         }
-        .stat-item { 
+        .stat-item {
             text-align: center;
             padding: 10px;
             background: rgba(255,255,255,0.05);
@@ -300,18 +300,18 @@
         .stat-item:hover::before {
             opacity: 1;
         }
-        .stat-value { 
-            font-size: 22px; 
-            font-weight: bold; 
+        .stat-value {
+            font-size: 22px;
+            font-weight: bold;
             color: #10b981;
             text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
         }
-        .stat-value.negative { 
+        .stat-value.negative {
             color: #ef4444;
             text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
         }
         .stat-label { font-size: 11px; color: #888; }
-        
+
         /* ===== 动画效果 ===== */
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
@@ -325,7 +325,7 @@
             0%, 100% { box-shadow: 0 0 5px rgba(0,212,255,0.3); }
             50% { box-shadow: 0 0 20px rgba(0,212,255,0.6); }
         }
-        
+
         /* 脉冲指示器样式 */
         .pulse-dot {
             display: inline-block;
@@ -338,16 +338,16 @@
         .pulse-green { background: #10b981; }
         .pulse-red { background: #ef4444; }
         .pulse-blue { background: #00d4ff; }
-        
+
         /* 滚动条美化 */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb { 
-            background: linear-gradient(135deg, #667eea, #764ba2); 
-            border-radius: 4px; 
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #7c8ff5, #8a5fb5); }
-        
+
         /* 四栏分析面板 - 玻璃态 */
         .analysis-grid {
             display: grid;
@@ -355,7 +355,7 @@
             gap: 15px;
             margin-bottom: 15px;
         }
-        
+
         .panel {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
@@ -370,7 +370,7 @@
             border-color: rgba(102, 126, 234, 0.3);
             box-shadow: 0 12px 40px rgba(0,0,0,0.3);
         }
-        
+
         .panel-header {
             display: flex;
             justify-content: space-between;
@@ -378,8 +378,8 @@
             padding-bottom: 12px;
             border-bottom: 2px solid rgba(255,255,255,0.1);
         }
-        .panel-title { 
-            font-size: 16px; 
+        .panel-title {
+            font-size: 16px;
             font-weight: bold;
             background: linear-gradient(135deg, #667eea 0%, #00d4ff 100%);
             -webkit-background-clip: text;
@@ -396,7 +396,7 @@
             border: 1px solid rgba(0, 212, 255, 0.3);
             transition: all 0.3s;
         }
-        
+
         /* 面板标题霓虹发光效果 */
         .panel-header {
             position: relative;
@@ -415,12 +415,12 @@
         .panel:hover .panel-header::after {
             opacity: 1;
         }
-        
+
         .stock-list { max-height: 270px; overflow-y: auto; }
         .stock-list::-webkit-scrollbar { width: 6px; }
         .stock-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 3px; }
         .stock-list::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 3px; }
-        
+
         /* 股票卡片 - 悬浮微动效 */
         .stock-card {
             background: rgba(255,255,255,0.06);
@@ -440,11 +440,11 @@
             opacity: 0;
             transition: opacity 0.35s;
         }
-        .stock-card:hover { 
+        .stock-card:hover {
             background: rgba(255,255,255,0.1);
             transform: translateY(-5px) scale(1.02);
             border-color: rgba(0, 212, 255, 0.4);
-            box-shadow: 
+            box-shadow:
                 0 15px 40px rgba(0, 212, 255, 0.2),
                 0 0 30px rgba(0, 212, 255, 0.1),
                 inset 0 1px 0 rgba(255,255,255,0.1);
@@ -452,11 +452,11 @@
         .stock-card:hover::before {
             opacity: 1;
         }
-        
+
         .stock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .stock-name { font-size: 14px; font-weight: bold; color: #fff; }
         .stock-code { font-size: 11px; color: #888; margin-left: 8px; }
-        
+
         /* 分数徽章 - 环形进度条 */
         .stock-score {
             width: 48px;
@@ -483,31 +483,31 @@
             -webkit-mask-composite: xor;
             mask-composite: exclude;
         }
-        .score-high { 
+        .score-high {
             --score-color: #10b981;
             --score-pct: 80%;
             color: #10b981;
             box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), inset 0 0 15px rgba(16, 185, 129, 0.2);
         }
-        .score-medium { 
+        .score-medium {
             --score-color: #f59e0b;
             --score-pct: 60%;
             color: #f59e0b;
             box-shadow: 0 0 20px rgba(245, 158, 11, 0.4), inset 0 0 15px rgba(245, 158, 11, 0.2);
         }
-        .score-low { 
+        .score-low {
             --score-color: #ef4444;
             --score-pct: 30%;
             color: #ef4444;
             box-shadow: 0 0 20px rgba(239, 68, 68, 0.4), inset 0 0 15px rgba(239, 68, 68, 0.2);
         }
-        .score-hold { 
+        .score-hold {
             --score-color: #6366f1;
             --score-pct: 50%;
             color: #6366f1;
             box-shadow: 0 0 20px rgba(99, 102, 241, 0.4), inset 0 0 15px rgba(99, 102, 241, 0.2);
         }
-        
+
         .stock-info {
             display: flex;
             justify-content: space-between;
@@ -515,7 +515,7 @@
             color: #888;
             margin-bottom: 8px;
         }
-        
+
         .stock-price-info {
             display: flex;
             gap: 12px;
@@ -525,7 +525,7 @@
         .price-item { color: #aaa; }
         .price-buy { color: #10b981; font-weight: bold; }
         .price-sell { color: #ef4444; font-weight: bold; }
-        
+
         .stock-advice {
             font-size: 12px;
             padding: 8px 10px;
@@ -534,37 +534,37 @@
             margin-top: 8px;
             transition: all 0.3s;
         }
-        .advice-buy { 
-            color: #10b981; 
-            border-left: 3px solid #10b981; 
+        .advice-buy {
+            color: #10b981;
+            border-left: 3px solid #10b981;
             padding-left: 12px;
             background: linear-gradient(90deg, rgba(16,185,129,0.15), transparent);
         }
-        .advice-sell { 
-            color: #ef4444; 
-            border-left: 3px solid #ef4444; 
+        .advice-sell {
+            color: #ef4444;
+            border-left: 3px solid #ef4444;
             padding-left: 12px;
             background: linear-gradient(90deg, rgba(239,68,68,0.15), transparent);
         }
-        .advice-hold { 
-            color: #6366f1; 
-            border-left: 3px solid #6366f1; 
+        .advice-hold {
+            color: #6366f1;
+            border-left: 3px solid #6366f1;
             padding-left: 12px;
             background: linear-gradient(90deg, rgba(99,102,241,0.15), transparent);
         }
-        .advice-watch { 
-            color: #f59e0b; 
-            border-left: 3px solid #f59e0b; 
+        .advice-watch {
+            color: #f59e0b;
+            border-left: 3px solid #f59e0b;
             padding-left: 12px;
             background: linear-gradient(90deg, rgba(245,158,11,0.15), transparent);
         }
-        
+
         .stock-actions {
             display: flex;
             gap: 5px;
             margin-top: 8px;
         }
-        
+
         /* 大盘信息面板 - 玻璃态 */
         .market-panel {
             background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
@@ -575,10 +575,10 @@
             border: 1px solid rgba(102, 126, 234, 0.2);
             box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         }
-        .market-header { 
-            font-size: 16px; 
-            font-weight: bold; 
-            margin-bottom: 15px; 
+        .market-header {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
             color: #00d4ff;
         }
         .market-grid {
@@ -598,7 +598,7 @@
         .market-card:hover {
             transform: translateY(-4px) scale(1.02);
             border-color: rgba(0, 212, 255, 0.5);
-            box-shadow: 
+            box-shadow:
                 0 12px 35px rgba(0, 212, 255, 0.2),
                 0 0 20px rgba(0, 212, 255, 0.1);
         }
@@ -652,7 +652,7 @@
             color: #764ba2;
             margin-top: 4px;
         }
-        
+
         .market-chart {
             background: rgba(0,0,0,0.2);
             border-radius: 8px;
@@ -677,7 +677,7 @@
         }
         .market-adjust-title { font-size: 13px; color: #667eea; margin-bottom: 8px; }
         .market-adjust-row { font-size: 11px; color: #aaa; padding: 3px 0; }
-        
+
         /* 弹窗 */
         .modal {
             display: none;
@@ -692,13 +692,31 @@
         .modal-content {
             background: #1a1a2e;
             border-radius: 15px;
-            padding: 20px;
-            max-width: 500px;
-            width: 90%;
+            padding: 25px;
+            max-width: 640px;
+            width: 92%;
             border: 1px solid rgba(255,255,255,0.2);
+            max-height: 85vh;
+            overflow-y: auto;
         }
         .modal-header { font-size: 18px; font-weight: bold; margin-bottom: 15px; }
         .modal-body { font-size: 13px; line-height: 1.6; }
+        .detail-card {
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-left: 3px solid #667eea;
+        }
+        .detail-card-title {
+            font-weight: bold;
+            font-size: 13px;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        .detail-table { width: 100%; font-size: 12px; }
+        .detail-table td { padding: 3px 0; }
+        .detail-table td:first-child { color: #888; width: 40%; }
         .modal-close {
             position: absolute;
             top: 10px; right: 15px;
@@ -706,7 +724,7 @@
             cursor: pointer;
             color: #888;
         }
-        
+
         /* 滚动条 */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
@@ -719,7 +737,7 @@
         <div class="header">
             <h1>📊 波段股票分析系统 v5.0 - 大盘走势权重版</h1>
             <div class="time-info">
-                股票池范围：30只波段股票 | 数据更新：<span id="updateTime">--</span>
+                股票池范围:30只波段股票 | 数据更新:<span id="updateTime">--</span>
                 <span id="updateStatus" style="margin-left:10px;color:#f59e0b"></span>
             </div>
             <div>
@@ -729,13 +747,22 @@
                 <button class="btn" onclick="exportHoldings()">💾 导出持仓</button>
             </div>
         </div>
-        
+
+        <!-- V4/V5 Engine Switch -->
+        <div style="display:flex;justify-content:center;gap:10px;margin:10px 0;">
+            <button class="btn btn-info" id="btnV4" onclick="switchEngine('v4')">V4 Production</button>
+            <button class="btn" id="btnV5" onclick="switchEngine('v5')">V5 Training</button>
+        </div>
+        <div style="text-align:center;font-size:12px;color:#888;margin-bottom:10px;">
+            <span id="engineInfo">Current Engine: V4 | Threshold:60 Hold:2days</span>
+        </div>
+
         <!-- 持仓录入面板 -->
         <div class="input-panel">
-            <div class="input-header">📝 持仓数据录入（仅限股票池30只）</div>
+            <div class="input-header">📝 持仓数据录入(仅限股票池30只)</div>
             <div class="input-form">
                 <div class="input-group">
-                    <label class="input-label">股票代码（自动映射名称）</label>
+                    <label class="input-label">股票代码(自动映射名称)</label>
                     <select id="stockCode" class="input-field">
                         <option value="">-- 选择股票 --</option>
                         <option value="605196.SH">华通线缆 (605196.SH)</option>
@@ -771,12 +798,12 @@
                     </select>
                 </div>
                 <div class="input-group">
-                    <label class="input-label">持仓数量（股）</label>
-                    <input type="number" id="shares" class="input-field" placeholder="如：1000" min="1" step="100">
+                    <label class="input-label">持仓数量(股)</label>
+                    <input type="number" id="shares" class="input-field" placeholder="如:1000" min="1" step="100">
                 </div>
                 <div class="input-group">
-                    <label class="input-label">持仓成本（元）</label>
-                    <input type="number" id="buyPrice" class="input-field" placeholder="如：45.20" min="0.01" step="0.01">
+                    <label class="input-label">持仓成本(元)</label>
+                    <input type="number" id="buyPrice" class="input-field" placeholder="如:45.20" min="0.01" step="0.01">
                 </div>
                 <div class="input-group">
                     <label class="input-label">买入日期</label>
@@ -788,7 +815,7 @@
             </div>
             <div class="holdings-list" id="holdingsList"></div>
         </div>
-        
+
         <!-- 统计面板 -->
         <div class="stats-panel">
             <div class="stats-grid">
@@ -818,7 +845,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- 四栏分析面板 -->
         <div class="analysis-grid">
             <div class="panel">
@@ -850,7 +877,7 @@
                 <div class="stock-list" id="watchList"></div>
             </div>
         </div>
-        
+
         <!-- 大盘信息面板 -->
         <div class="market-panel">
             <div class="market-header">📊 大盘走势信息</div>
@@ -888,7 +915,7 @@
                     <div class="market-card-value" id="suggestPosition">--</div>
                 </div>
             </div>
-            
+
             <!-- 多指数对比面板 -->
             <div class="indices-panel">
                 <div class="indices-title">📊 多指数对比</div>
@@ -914,10 +941,10 @@
                 <div class="market-chart-title">沪深300最近5日走势</div>
                 <div id="marketChartContent"></div>
             </div>
-            
+
         </div>
     </div>
-    
+
     <!-- 弹窗 -->
     <div class="modal" id="reportModal">
         <div class="modal-content" style="position:relative;">
@@ -926,7 +953,7 @@
             <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
-    
+
     <script>
         // ===== 动画增强 =====
         // 卡片入场动画
@@ -942,7 +969,7 @@
                 }, index * 30);
             });
         }
-        
+
         // 数字滚动动画
         function animateValue(element, start, end, duration) {
             if (!element) return;
@@ -957,7 +984,7 @@
             };
             requestAnimationFrame(update);
         }
-        
+
         // 数据更新闪烁效果
         function flashUpdate(element, color = '#10b981') {
             if (!element) return;
@@ -967,7 +994,7 @@
                 element.style.boxShadow = '';
             }, 500);
         }
-        
+
         // 脉冲指示器
         function createPulseIndicator(color = '#10b981') {
             const dot = document.createElement('span');
@@ -982,7 +1009,7 @@
             `;
             return dot;
         }
-        
+
         // 股票名称映射
         const STOCK_NAMES = {
             '605196.SH': '华通线缆', '688028.SH': '沃尔德', '688195.SH': '芯源微',
@@ -996,11 +1023,11 @@
             '002916.SZ': '深南电路', '300604.SZ': '长川科技', '603228.SH': '景旺电子',
             '688698.SH': '博众精工', '002460.SZ': '赣锋锂业', '300476.SZ': '胜宏科技',
         };
-        
+
         // 持仓数据
         let holdings = [];
         let analysisData = null;
-        
+
         // 初始化
         function init() {
             try {
@@ -1008,8 +1035,9 @@
             } catch(e) { holdings = []; }
             renderHoldings();
             loadData();
+            setTimeout(loadSystemInfo, 100);
             setInterval(loadData, 300000);
-            
+
             // 监听更新状态
             if (window.electronAPI) {
                 window.electronAPI.onUpdateStatus((status) => {
@@ -1017,49 +1045,50 @@
                 });
                 window.electronAPI.onDataUpdated(() => {
                     loadData();
+                    loadSystemInfo();
                     document.getElementById('updateStatus').textContent = '';
                 });
             }
         }
-        
+
         // 添加持仓
         function addHolding() {
             const code = document.getElementById('stockCode').value;
             const shares = parseInt(document.getElementById('shares').value) || 0;
             const buyPrice = parseFloat(document.getElementById('buyPrice').value) || 0;
             const buyDate = document.getElementById('buyDate').value;
-            
-            if (!code) { alert('请选择股票代码！'); return; }
-            if (shares <= 0) { alert('请输入正确的持仓数量！'); return; }
-            if (buyPrice <= 0) { alert('请输入正确的持仓成本！'); return; }
-            
+
+            if (!code) { alert('请选择股票代码!'); return; }
+            if (shares <= 0) { alert('请输入正确的持仓数量!'); return; }
+            if (buyPrice <= 0) { alert('请输入正确的持仓成本!'); return; }
+
             const existing = holdings.find(h => h.code === code);
             if (existing) {
                 existing.shares = shares;
                 existing.buyPrice = buyPrice;
                 existing.buyDate = buyDate;
             } else {
-                holdings.push({ 
-                    code, 
-                    name: STOCK_NAMES[code] || code, 
-                    shares, 
-                    buyPrice, 
-                    buyDate 
+                holdings.push({
+                    code,
+                    name: STOCK_NAMES[code] || code,
+                    shares,
+                    buyPrice,
+                    buyDate
                 });
             }
-            
+
             localStorage.setItem('stockHoldings', JSON.stringify(holdings));
-            
+
             document.getElementById('stockCode').value = '';
             document.getElementById('shares').value = '';
             document.getElementById('buyPrice').value = '';
-            
+
             renderHoldings();
             if (analysisData) updateHoldingsAnalysis(analysisData);
-            
-            alert('持仓已添加：' + STOCK_NAMES[code] + ' ' + shares + '股');
+
+            alert('持仓已添加:' + STOCK_NAMES[code] + ' ' + shares + '股');
         }
-        
+
         // 删除持仓
         function deleteHolding(code) {
             holdings = holdings.filter(h => h.code !== code);
@@ -1067,18 +1096,18 @@
             renderHoldings();
             if (analysisData) updateHoldingsAnalysis(analysisData);
         }
-        
+
         // 渲染持仓列表
         function renderHoldings() {
             const container = document.getElementById('holdingsList');
-            
+
             if (holdings.length === 0) {
-                container.innerHTML = '<div style="color:#888;text-align:center;padding:15px;grid-column:1/-1;">暂无持仓数据，请在上方添加</div>';
+                container.innerHTML = '<div style="color:#888;text-align:center;padding:15px;grid-column:1/-1;">暂无持仓数据,请在上方添加</div>';
                 document.getElementById('holdCount').textContent = '0';
                 document.getElementById('totalCost').textContent = '0';
                 return;
             }
-            
+
             container.innerHTML = holdings.map(h => `
                 <div class="holding-card">
                     <div class="holding-header">
@@ -1094,14 +1123,33 @@
                     <div class="holding-advice" id="advice_${h.code.replace('.','_')}">等待分析数据...</div>
                 </div>
             `).join('');
-            
+
             document.getElementById('holdCount').textContent = holdings.length;
             document.getElementById('totalCost').textContent = Math.round(holdings.reduce((a,b) => a + b.shares * b.buyPrice, 0));
         }
-        
+
+        // Current engine (v4 or v5)
+        let currentEngine = 'v4';
+
+        // 切换引擎
+        function switchEngine(engine) {
+            currentEngine = engine;
+            document.getElementById('btnV4').className = engine === 'v4' ? 'btn btn-info' : 'btn';
+            document.getElementById('btnV5').className = engine === 'v5' ? 'btn btn-info' : 'btn';
+
+            if (engine === 'v4') {
+                document.getElementById('engineInfo').textContent = 'Current Engine: V4 | Threshold:60 Hold:2days';
+            } else {
+                document.getElementById('engineInfo').textContent = 'Current Engine: V5 | Threshold:45 Hold:12days (75.6% WR)';
+            }
+
+            loadData();
+        }
+
         // 加载分析数据
         function loadData() {
-            fetch('result.json?t=' + Date.now())
+            const jsonFile = currentEngine === 'v5' ? 'result_v5.json' : 'result.json';
+            fetch(jsonFile + '?t=' + Date.now())
                 .then(r => {
                     if (!r.ok) throw new Error('HTTP ' + r.status);
                     return r.json();
@@ -1114,28 +1162,50 @@
                     document.getElementById('updateTime').textContent = data.update_time || '--';
                 })
                 .catch(e => {
-                    document.getElementById('buyList').innerHTML = '<div style="color:#888;text-align:center;padding:20px;">请先运行分析：python analyzer_v4.py</div>';
+                    document.getElementById('buyList').innerHTML = '<div style="color:#888;text-align:center;padding:20px;">请先运行分析:python analyzer_v4.py</div>';
                 });
         }
-        
+
+        // 加载系统信息（数据源+回测命中率）
+        async function loadSystemInfo() {
+            if (!window.electronAPI || !window.electronAPI.getDataSource) return;
+            try {
+                const ds = await window.electronAPI.getDataSource();
+                const br = await window.electronAPI.getBacktestReport();
+                if (ds && ds.source && ds.source !== 'unknown') {
+                    const srcMap = { tencent: '腾讯', sina: '新浪', eastmoney: '东方财富', db_fallback: '数据库' };
+                    const srcName = srcMap[ds.source] || ds.source;
+                    const hitStr = br && br.hit_rate ? ` | 回测命中率${br.hit_rate}%` : '';
+                    const curText = document.getElementById('engineInfo').textContent;
+                    // 避免重复追加
+                    if (!curText.includes('数据源:')) {
+                        document.getElementById('engineInfo').textContent =
+                            curText + ` | 数据源:${srcName}${hitStr}`;
+                    }
+                }
+            } catch (e) {
+                // 静默失败
+            }
+        }
+
         // 更新持仓分析
         function updateHoldingsAnalysis(data) {
             if (!data || !data.stocks) return;
-            
+
             let totalValue = 0, totalProfit = 0, scores = [];
             const totalCost = holdings.reduce((a,b) => a + b.shares * b.buyPrice, 0);
-            
+
             holdings.forEach(h => {
                 const analysis = data.stocks.find(s => s.code === h.code);
                 if (analysis) {
                     const currentPrice = analysis.close;
                     const profit = (currentPrice - h.buyPrice) / h.buyPrice * 100;
                     const holdDays = Math.floor((new Date() - new Date(h.buyDate)) / 86400000);
-                    
+
                     totalValue += currentPrice * h.shares;
                     totalProfit += (currentPrice - h.buyPrice) * h.shares;
                     scores.push(analysis.score);
-                    
+
                     const adviceId = 'advice_' + h.code.replace('.','_');
                     const adviceEl = document.getElementById(adviceId);
                     if (adviceEl) {
@@ -1149,30 +1219,31 @@
                     }
                 }
             });
-            
+
             document.getElementById('totalValue').textContent = Math.round(totalValue);
             document.getElementById('totalProfit').textContent = Math.round(totalProfit);
             document.getElementById('profitRate').textContent = totalCost > 0 ? ((totalValue - totalCost) / totalCost * 100).toFixed(1) + '%' : '0%';
             document.getElementById('avgScore').textContent = scores.length > 0 ? Math.round(scores.reduce((a,b) => a+b) / scores.length) : '--';
             document.getElementById('holdCount2').textContent = holdings.length;
-            
+
             // 更新盈亏颜色
             const profitEl = document.getElementById('totalProfit');
             profitEl.className = totalProfit >= 0 ? 'stat-value' : 'stat-value negative';
         }
-        
+
         // 显示分析数据
         function displayAnalysis(data) {
             const stocks = data.stocks || [];
             const holdingCodes = holdings.map(h => h.code);
-            const threshold = data.market?.threshold || 60;  // 从market获取买入阈值
-            
-            // 分类（使用adjusted_score，不排除持仓股）
+            // V4 uses threshold 60, V5 uses threshold 45
+            const threshold = currentEngine === 'v5' ? 45 : (data.market?.threshold || 60);
+
+            // 分类(使用adjusted_score,不排除持仓股)
             const buyStocks = stocks.filter(s => (s.adjusted_score || s.score) >= threshold).sort((a,b) => (b.adjusted_score || b.score) - (a.adjusted_score || a.score));
             const sellStocks = stocks.filter(s => (s.adjusted_score || s.score) < 15).sort((a,b) => (a.adjusted_score || a.score) - (b.adjusted_score || b.score));
             const watchStocks = stocks.filter(s => (s.adjusted_score || s.score) >= 15 && (s.adjusted_score || s.score) < threshold);
             const holdStocks = stocks.filter(s => holdingCodes.includes(s.code));
-            
+
             // 买入推荐
             document.getElementById('buyCount').textContent = buyStocks.length + '只';
             document.getElementById('buyList').innerHTML = buyStocks.length > 0 ? buyStocks.map(s => `
@@ -1183,14 +1254,14 @@
                     </div>
                     <div class="stock-price-info">
                         <span class="price-item">现价: <strong>${s.close.toFixed(2)}元</strong></span>
-                        <span class="price-item">建议买入: <strong class="price-buy">${s.buy_price.toFixed(2)}元</strong></span>
+                        <span class="price-item">建议买入: <strong class="price-buy">${(s.buy_price || s.close * 0.98).toFixed(2)}元</strong></span>
                     </div>
                     <div class="stock-price-info">
-                        <span class="price-item">目标卖出: <strong class="price-sell">${s.sell_price.toFixed(2)}元</strong></span>
-                        <span class="price-item">止损价: <strong style="color:#ef4444">${s.stop_price.toFixed(2)}元</strong></span>
+                        <span class="price-item">目标卖出: <strong class="price-sell">${(s.sell_price || s.close * 1.15).toFixed(2)}元</strong></span>
+                        <span class="price-item">止损价: <strong style="color:#ef4444">${(s.stop_price || s.close * 0.92).toFixed(2)}元</strong></span>
                     </div>
                     <div class="stock-info">
-                        <span>RSI6: ${s.rsi6 || '--'}</span>
+                        <span>特征: ${s.features_count || 25}+</span>
                         <span>涨幅概率: ${s.score}%</span>
                     </div>
                     <div class="stock-advice advice-buy">${s.advice || getBuyAdvice(s)}</div>
@@ -1199,7 +1270,7 @@
                     </div>
                 </div>
             `).join('') : '<div style="color:#888;text-align:center;padding:20px;">暂无买入推荐</div>';
-            
+
             // 持仓指导
             document.getElementById('holdList').innerHTML = holdStocks.length > 0 ? holdStocks.map(s => {
                 const h = holdings.find(h => h.code === s.code);
@@ -1231,7 +1302,7 @@
                     </div>
                 `;
             }).join('') : '<div style="color:#888;text-align:center;padding:20px;">请添加持仓数据</div>';
-            
+
             // 卖出建议
             document.getElementById('sellCount').textContent = sellStocks.length + '只';
             document.getElementById('sellList').innerHTML = sellStocks.length > 0 ? sellStocks.map(s => `
@@ -1242,7 +1313,7 @@
                     </div>
                     <div class="stock-price-info">
                         <span class="price-item">现价: <strong class="price-sell">${s.close.toFixed(2)}元</strong></span>
-                        <span class="price-item">建议卖出: <strong class="price-sell">${s.close.toFixed(2)}元</strong></span>
+                        <span class="price-item">建议卖出: <strong class="price-sell">${(s.sell_price || s.close).toFixed(2)}元</strong></span>
                     </div>
                     <div class="stock-price-info">
                         <span class="price-item">跌幅概率: ${100-s.score}%</span>
@@ -1254,7 +1325,7 @@
                     </div>
                 </div>
             `).join('') : '<div style="color:#888;text-align:center;padding:20px;">暂无卖出建议</div>';
-            
+
             // 观望池
             document.getElementById('watchCount').textContent = watchStocks.length + '只';
             document.getElementById('watchList').innerHTML = watchStocks.length > 0 ? watchStocks.map(s => `
@@ -1266,59 +1337,59 @@
                     <div class="stock-price-info">
                         <span class="price-item">现价: ${s.close.toFixed(2)}元</span>
                     </div>
-                    <div class="stock-advice advice-watch">${s.advice || '观望，等待明确信号'}</div>
+                    <div class="stock-advice advice-watch">${s.advice || '观望,等待明确信号'}</div>
                 </div>
             `).join('') : '<div style="color:#888;text-align:center;padding:20px;">暂无观望股票</div>';
         }
-        
-        
+
+
         // 显示大盘信息
         function displayMarket(data) {
             const market = data.market || {};
-            
+
             // 显示市场状态
             const statusEl = document.getElementById('marketStatus');
             const pctEl = document.getElementById('marketPct');
             const factorEl = document.getElementById('marketFactor');
             const thresholdEl = document.getElementById('marketThreshold');
-            
+
             if (statusEl) {
                 const status = market.status || '震荡市场';
                 statusEl.textContent = status;
-                statusEl.className = 'market-card-value ' + 
+                statusEl.className = 'market-card-value ' +
                     (status.includes('强') ? 'market-strong' : status.includes('弱') ? 'market-weak' : 'market-neutral');
             }
-            
+
             if (pctEl) {
                 const pct = market.pct_5d || 0;
                 pctEl.textContent = pct.toFixed(2) + '%';
-                pctEl.className = 'market-card-value ' + 
+                pctEl.className = 'market-card-value ' +
                     (pct >= 1 ? 'market-strong' : pct <= -1 ? 'market-weak' : 'market-neutral');
             }
-            
+
             if (factorEl) {
                 const factor = market.factor || 1.0;
                 factorEl.textContent = factor.toFixed(2);
-                factorEl.className = 'market-card-value ' + 
+                factorEl.className = 'market-card-value ' +
                     (factor > 1 ? 'market-strong' : factor < 1 ? 'market-weak' : 'market-neutral');
             }
-            
+
             if (thresholdEl) {
                 thresholdEl.textContent = (market.buy_threshold || 60) + '分';
                 thresholdEl.className = 'market-card-value market-neutral';
             }
-            
-            // 新增4卡片：卖出阈值、止盈线、止损线、建议仓位
+
+            // 新增4卡片:卖出阈值、止盈线、止损线、建议仓位
             const sellEl = document.getElementById('sellThreshold');
             const profitEl = document.getElementById('stopProfit');
             const lossEl = document.getElementById('stopLoss');
             const positionEl = document.getElementById('suggestPosition');
-            
+
             if (sellEl) sellEl.textContent = (market.sell_threshold || 15) + '分';
             if (profitEl) profitEl.textContent = '+' + (market.stop_profit || 20) + '%';
             if (lossEl) lossEl.textContent = (market.stop_loss || -10) + '%';
             if (positionEl) positionEl.textContent = (market.suggest_position || 15) + '%';
-            
+
             // 多指数对比面板
             const indices = market.indices || {};
             const hs300PctEl = document.getElementById('hs300Pct');
@@ -1327,31 +1398,31 @@
             const hs300LatestEl = document.getElementById('hs300Latest');
             const zz500LatestEl = document.getElementById('zz500Latest');
             const dominantEl = document.getElementById('dominant');
-            
+
             if (hs300PctEl && indices.hs300) {
                 const hs300_pct = indices.hs300.pct_5d || 0;
                 hs300PctEl.textContent = hs300_pct.toFixed(2) + '%';
                 hs300PctEl.className = 'indices-value ' + (hs300_pct >= 0 ? 'positive' : 'negative');
                 if (hs300LatestEl) hs300LatestEl.textContent = '最新: ' + (indices.hs300.latest || 0).toFixed(2);
             }
-            
+
             if (zz500PctEl && indices.zz500) {
                 const zz500_pct = indices.zz500.pct_5d || 0;
                 zz500PctEl.textContent = zz500_pct.toFixed(2) + '%';
                 zz500PctEl.className = 'indices-value ' + (zz500_pct >= 0 ? 'positive' : 'negative');
                 if (zz500LatestEl) zz500LatestEl.textContent = '最新: ' + (indices.zz500.latest || 0).toFixed(2);
             }
-            
+
             if (divergenceEl) {
                 const divergence = indices.divergence || 0;
                 divergenceEl.textContent = divergence.toFixed(2) + '%';
                 divergenceEl.className = 'indices-value ' + (divergence >= 1 ? 'negative' : 'positive');
             }
-            
+
             if (dominantEl) {
                 dominantEl.textContent = (indices.dominant || '大盘股') + '主导';
             }
-            
+
             // 显示最近5日走势
             const chartEl = document.getElementById('marketChartContent');
             if (chartEl && market.recent_5d) {
@@ -1364,13 +1435,13 @@
                     </div>`;
                 }).join('');
             }
-            
+
             // 显示评分调整示例
             const adjustEl = document.getElementById('adjustExamples');
             if (adjustEl && data.stocks) {
                 const samples = data.stocks.slice(0, 5);
                 adjustEl.innerHTML = samples.map(s => {
-                    const adjScore = s.adjusted_score || s.score;  // 容错：无adjusted_score时用原score
+                    const adjScore = s.adjusted_score || s.score;  // 容错:无adjusted_score时用原score
                     const change = adjScore - s.score;
                     const changeClass = change > 0 ? 'market-strong' : change < 0 ? 'market-weak' : 'market-neutral';
                     return `<div class="market-adjust-row">
@@ -1384,7 +1455,7 @@
         function displayReport(data) {
             const stats = data.statistics || {};
             const market = data.market_analysis || '';
-            
+
             document.getElementById('reportContent').innerHTML = `
                 <div class="report-card">
                     <div class="report-title">今日策略</div>
@@ -1404,7 +1475,7 @@
                 </div>
                 <div class="report-card">
                     <div class="report-title">市场分析</div>
-                    <div class="report-detail">${market || '震荡市场，信号中性'}</div>
+                    <div class="report-detail">${market || '震荡市场,信号中性'}</div>
                 </div>
                 <div class="report-card">
                     <div class="report-title">风险提示</div>
@@ -1424,78 +1495,158 @@
                 </div>
             `;
         }
-        
+
         // 买入建议生成
         function getBuyAdvice(s) {
-            if (s.score >= 80) return `强烈推荐买入！评分${s.score}分。建议优先配置15-20%仓位。`;
-            if (s.score >= 70) return `推荐买入。评分${s.score}分。建议分批建仓，首次10%。`;
+            if (s.score >= 80) return `强烈推荐买入!评分${s.score}分。建议优先配置15-20%仓位。`;
+            if (s.score >= 70) return `推荐买入。评分${s.score}分。建议分批建仓,首次10%。`;
             return `可考虑买入。评分${s.score}分。建议T+1策略。`;
         }
-        
+
         // 卖出建议生成
         function getSellAdvice(s) {
-            return `建议卖出！评分仅${s.score}分，跌幅概率${100-s.score}%。`;
+            return `建议卖出!评分仅${s.score}分,跌幅概率${100-s.score}%。`;
         }
-        
+
         // 持仓建议生成
         function getHoldingAdvice(profit, score, days) {
-            if (profit >= 25) return '✅ 已达止盈线(25%)，建议分批卖出锁定收益';
-            if (profit >= 15) return '盈利可观，建议部分止盈30-50%';
-            if (profit >= 5) return '小幅盈利，可继续持有';
-            if (profit >= -5) return '轻微亏损，继续观察';
-            if (profit >= -10) return '⚠️ 接近止损线(-10%)，密切关注';
-            return '🔴 触发止损线，建议果断卖出';
+            if (profit >= 25) return '✅ 已达止盈线(25%),建议分批卖出锁定收益';
+            if (profit >= 15) return '盈利可观,建议部分止盈30-50%';
+            if (profit >= 5) return '小幅盈利,可继续持有';
+            if (profit >= -5) return '轻微亏损,继续观察';
+            if (profit >= -10) return '⚠️ 接近止损线(-10%),密切关注';
+            return '🔴 触发止损线,建议果断卖出';
         }
-        
+
         // 显示股票报告弹窗
         function showStockReport(code) {
             if (!analysisData) return;
             const stock = analysisData.stocks.find(s => s.code === code);
             if (!stock) return;
-            
+
             const h = holdings.find(h => h.code === code);
-            const profit = h ? ((stock.close - h.buyPrice) / h.buyPrice * 100).toFixed(1) : '--';
-            
+            const profit = h ? ((stock.close - h.buyPrice) / h.buyPrice * 100).toFixed(1) : null;
+
+            // 安全取值
+            const close = stock.close || 0;
+            const pct = stock.pct_chg || 0;
+            const score = stock.score || 0;
+            const vol = stock.volume || 0;
+            const rsi = stock.rsi6;
+            const macd = stock.macd;
+            const k_val = stock.k, d_val = stock.d, j_val = stock.j;
+            const buyP = stock.buy_price, sellP = stock.sell_price, stopP = stock.stop_price;
+            const advice = stock.advice || '';
+            const pct5d = stock.pct_chg_5d;
+            const amplitude = stock.amplitude;
+
+            // 颜色
+            const pctColor = pct >= 0 ? '#ef4444' : '#10b981';
+            const scoreColor = score >= 70 ? '#10b981' : score >= 40 ? '#f59e0b' : '#ef4444';
+
             document.getElementById('modalTitle').textContent = stock.name + ' 详细报告';
-            document.getElementById('modalBody').innerHTML = `
-                <div style="margin-bottom:15px;">
-                    <strong>基本信息</strong><br>
-                    代码: ${stock.code}<br>
-                    现价: ${stock.close.toFixed(2)}元<br>
-                    涨跌幅: ${stock.pct_chg.toFixed(2)}%<br>
-                    评分: ${stock.score}分<br>
-                </div>
-                <div style="margin-bottom:15px;">
-                    <strong>技术指标</strong><br>
-                    RSI6: ${stock.rsi6 || '--'}<br>
-                    MACD: ${stock.macd || '--'}<br>
-                    成交量: ${(stock.volume/10000).toFixed(0)}万<br>
-                </div>
-                ${h ? `
-                <div style="margin-bottom:15px;">
-                    <strong>持仓信息</strong><br>
-                    成本: ${h.buyPrice.toFixed(2)}元<br>
-                    数量: ${h.shares}股<br>
-                    盈亏: ${profit}%<br>
-                    持仓天数: ${Math.floor((new Date()-new Date(h.buyDate))/86400000)}天<br>
-                </div>
-                ` : ''}
-                <div>
-                    <strong>操作建议</strong><br>
-                    ${stock.advice || (stock.score >= 60 ? getBuyAdvice(stock) : getSellAdvice(stock))}
-                </div>
-            `;
-            
+
+            let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">';
+
+            // ── 左栏：基本信息 + 技术指标 ──
+            html += '<div>';
+
+            // 信息卡片
+            html += `<div class="detail-card">
+                <div class="detail-card-title">📋 基本信息</div>
+                <table class="detail-table">
+                    <tr><td>代码</td><td>${stock.code || '--'}</td></tr>
+                    <tr><td>名称</td><td>${stock.name || '--'}</td></tr>
+                    <tr><td>现价</td><td style="font-weight:bold;font-size:16px;">${close.toFixed(2)} 元</td></tr>
+                    <tr><td>涨跌幅</td><td style="color:${pctColor};font-weight:bold;">${pct.toFixed(2)}%</td></tr>
+                    <tr><td>评分</td><td style="color:${scoreColor};font-weight:bold;">${score} 分</td></tr>
+                    ${pct5d != null ? `<tr><td>5日涨跌幅</td><td>${pct5d.toFixed(2)}%</td></tr>` : ''}
+                </table>
+            </div>`;
+
+            // 技术指标
+            html += `<div class="detail-card">
+                <div class="detail-card-title">📊 技术指标</div>
+                <table class="detail-table">
+                    <tr><td>RSI(6)</td><td style="color:${rsi > 70 ? '#ef4444' : rsi < 30 ? '#10b981' : '#f59e0b'}">${rsi != null ? rsi.toFixed(1) : '--'}</td></tr>
+                    <tr><td>MACD</td><td style="color:${macd > 0 ? '#ef4444' : '#10b981'}">${macd != null ? macd.toFixed(2) : '--'}</td></tr>
+                    ${k_val != null ? `<tr><td>KDJ (K/D/J)</td><td>${k_val.toFixed(0)} / ${d_val != null ? d_val.toFixed(0) : '--'} / ${j_val != null ? j_val.toFixed(0) : '--'}</td></tr>` : ''}
+                    <tr><td>成交量</td><td>${vol > 0 ? (vol/10000).toFixed(0) + ' 万手' : '--'}</td></tr>
+                    ${amplitude != null ? `<tr><td>振幅</td><td>${amplitude.toFixed(2)}%</td></tr>` : ''}
+                </table>
+            </div>`;
+
+            html += '</div>';
+
+            // ── 右栏：资金流向 + 异动 + 买卖参考 + 操作建议 ──
+            html += '<div>';
+
+            // 买卖参考
+            if (buyP || sellP || stopP) {
+                html += `<div class="detail-card">
+                    <div class="detail-card-title">💰 买卖参考</div>
+                    <table class="detail-table">
+                        ${buyP ? `<tr><td>买入参考</td><td style="color:#10b981">${buyP.toFixed(2)} 元</td></tr>` : ''}
+                        ${sellP ? `<tr><td>卖出参考</td><td style="color:#ef4444">${sellP.toFixed(2)} 元</td></tr>` : ''}
+                        ${stopP ? `<tr><td>止损价</td><td style="color:#f59e0b">${stopP.toFixed(2)} 元</td></tr>` : ''}
+                        ${buyP && close ? `<tr><td>距买入价</td><td>${((close - buyP) / buyP * 100).toFixed(1)}%</td></tr>` : ''}
+                    </table>
+                </div>`;
+            }
+
+            // 异动信号
+            const anomalyFlag = stock.anomaly_flag || (stock.anomaly ? 1 : 0);
+            const anomalyReasons = stock.anomaly_reasons || null;
+            if (anomalyFlag == 1 && anomalyReasons) {
+                let reasons = '';
+                try {
+                    const arr = typeof anomalyReasons === 'string' ? JSON.parse(anomalyReasons) : anomalyReasons;
+                    reasons = arr.join('; ');
+                } catch(e) {
+                    reasons = anomalyReasons;
+                }
+                html += `<div class="detail-card" style="border-left:3px solid #f59e0b;">
+                    <div class="detail-card-title">⚡ 异动信号</div>
+                    <div style="font-size:12px;color:#f59e0b;">${reasons}</div>
+                </div>`;
+            }
+
+            // 持仓信息
+            if (h) {
+                const profitNum = parseFloat(profit);
+                const profitColor = profitNum >= 0 ? '#ef4444' : '#10b981';
+                const days = Math.floor((new Date() - new Date(h.buyDate)) / 86400000);
+                html += `<div class="detail-card" style="border-left:3px solid #667eea;">
+                    <div class="detail-card-title">📦 持仓信息</div>
+                    <table class="detail-table">
+                        <tr><td>持仓成本</td><td>${h.buyPrice.toFixed(2)} 元</td></tr>
+                        <tr><td>持仓数量</td><td>${h.shares} 股</td></tr>
+                        <tr><td>持仓盈亏</td><td style="color:${profitColor};font-weight:bold;">${profit}%</td></tr>
+                        <tr><td>持仓天数</td><td>${days} 天</td></tr>
+                    </table>
+                </div>`;
+            }
+
+            // 操作建议
+            html += `<div class="detail-card" style="border-left:3px solid ${scoreColor};background:rgba(16,185,129,0.05);">
+                <div class="detail-card-title">🎯 操作建议</div>
+                <div style="font-size:13px;line-height:1.7;color:#e0e0e0;">${advice || '等待系统分析...'}</div>
+            </div>`;
+
+            html += '</div>'; // end right
+            html += '</div>'; // end grid
+
+            document.getElementById('modalBody').innerHTML = html;
             document.getElementById('reportModal').classList.add('show');
         }
-        
+
         // 显示整体报告
         function showReport() {
             if (!analysisData) {
                 alert('请先运行分析获取数据');
                 return;
             }
-            
+
             document.getElementById('modalTitle').textContent = '整体分析报告';
             document.getElementById('modalBody').innerHTML = `
                 <div style="margin-bottom:15px;">
@@ -1517,28 +1668,28 @@
                     ${analysisData.market_analysis || '震荡市场'}
                 </div>
             `;
-            
+
             document.getElementById('reportModal').classList.add('show');
         }
-        
+
         // 关闭弹窗
         function closeModal() {
             document.getElementById('reportModal').classList.remove('show');
         }
-        
-        // 刷新数据（仅读取JSON）
+
+        // 刷新数据(仅读取JSON)
         function refreshData() { loadData(); }
-        
-        // 立即更新（数据更新+分析）
+
+        // 立即更新(数据更新+分析)
         function forceUpdate() {
             document.getElementById('updateStatus').textContent = '正在更新...';
             if (window.electronAPI) {
                 window.electronAPI.refreshData();
             } else {
-                alert('请在命令行运行：python analyzer_v4.py');
+                alert('请在命令行运行:python analyzer_v4.py');
             }
         }
-        
+
         // 导出持仓
         function exportHoldings() {
             const data = JSON.stringify(holdings, null, 2);
@@ -1548,12 +1699,12 @@
             a.download = 'holdings_' + new Date().toISOString().slice(0,10) + '.json';
             a.click();
         }
-        
+
         // 点击弹窗外部关闭
         document.getElementById('reportModal').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
-        
+
         // 初始化
         init();
     </script>
