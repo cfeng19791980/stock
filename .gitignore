@@ -12,9 +12,10 @@ __pycache__/
 model_cache/
 *.pkl
 
-# Database backups
+# Database and backups
+*.db
+*.db.bak
 *.bak
-*.db.bak.*
 
 # Logs
 *.log
@@ -36,5 +37,36 @@ build/
 *.exe
 
 # Data files (large)
-*.db
 *.json.bak
+*.exe
+*.db
+
+# Portable package
+portable_package/
+
+# Release
+release/
+
+# Stream collector temp
+stream_collector/capture/
+stream_collector/browser/
+
+# Test files
+test_*.py
+*_test.py
+
+# Backup files
+*.backup
+*.backup_*
+*.bak_*
+
+# Catboost info
+catboost_info/
+
+# Docs (generated)
+docs/
+
+# Temporary scripts
+_run_*.py
+check_*.py
+watch_*.py
