@@ -1,0 +1,12 @@
+{
+  "name": "stock-analysis-json",
+  "version": "3.0.0",
+  "description": "波段股票分析系统 - JSON架构（无Flask API）",
+  "main": "main_json.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^30.0.0"
+  }
+}

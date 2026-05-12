@@ -1,0 +1,9 @@
+{
+  "timestamp": "2026-04-23T20:25:43.497452",
+  "threshold": 40,
+  "trades": 2371,
+  "win_rate": 98.44,
+  "avg_return": 8.81,
+  "sharpe": 12.68,
+  "v4_win_rate": 75
+}

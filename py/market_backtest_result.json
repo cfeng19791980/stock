@@ -1,0 +1,103 @@
+{
+  "test_time": "2026-04-20T19:56:08.226227",
+  "backtest_period": "2025-01-01 ~ 2026-04-10",
+  "stock_count": 30,
+  "results": [
+    {
+      "config": "中等权重+阈值65",
+      "signals": 2160,
+      "correct": 2159,
+      "hit_rate": 99.95,
+      "avg_profit": 8.85,
+      "total_profit": 19116.59
+    },
+    {
+      "config": "无大盘调整",
+      "signals": 2404,
+      "correct": 2402,
+      "hit_rate": 99.92,
+      "avg_profit": 8.82,
+      "total_profit": 21208.32
+    },
+    {
+      "config": "保守调整(5%权重)",
+      "signals": 2399,
+      "correct": 2397,
+      "hit_rate": 99.92,
+      "avg_profit": 8.82,
+      "total_profit": 21152.53
+    },
+    {
+      "config": "轻奖重罚",
+      "signals": 2351,
+      "correct": 2349,
+      "hit_rate": 99.91,
+      "avg_profit": 8.82,
+      "total_profit": 20737.11
+    },
+    {
+      "config": "权重8%",
+      "signals": 2402,
+      "correct": 2399,
+      "hit_rate": 99.88,
+      "avg_profit": 8.81,
+      "total_profit": 21165.12
+    },
+    {
+      "config": "权重12%",
+      "signals": 2402,
+      "correct": 2399,
+      "hit_rate": 99.88,
+      "avg_profit": 8.8,
+      "total_profit": 21147.84
+    },
+    {
+      "config": "中等调整(10%权重)",
+      "signals": 2394,
+      "correct": 2391,
+      "hit_rate": 99.87,
+      "avg_profit": 8.81,
+      "total_profit": 21095.39
+    },
+    {
+      "config": "激进调整(15%权重)",
+      "signals": 2389,
+      "correct": 2386,
+      "hit_rate": 99.87,
+      "avg_profit": 8.82,
+      "total_profit": 21073.67
+    },
+    {
+      "config": "不对称-弱市重罚",
+      "signals": 2349,
+      "correct": 2346,
+      "hit_rate": 99.87,
+      "avg_profit": 8.83,
+      "total_profit": 20746.15
+    },
+    {
+      "config": "中等调整+阈值提升",
+      "signals": 2350,
+      "correct": 2346,
+      "hit_rate": 99.83,
+      "avg_profit": 8.84,
+      "total_profit": 20779.55
+    },
+    {
+      "config": "中等权重+阈值55",
+      "signals": 2567,
+      "correct": 2562,
+      "hit_rate": 99.81,
+      "avg_profit": 8.81,
+      "total_profit": 22626.24
+    }
+  ],
+  "best_config": {
+    "config": "中等权重+阈值65",
+    "signals": 2160,
+    "correct": 2159,
+    "hit_rate": 99.95,
+    "avg_profit": 8.85,
+    "total_profit": 19116.59
+  }
+}

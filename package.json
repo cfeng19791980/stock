@@ -1,0 +1,14 @@
+{
+  "name": "stock-analysis-app",
+  "version": "4.0.0",
+  "description": "波段股票分析系统 v4.0 - 持仓管理版",
+  "main": "main_json.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "付郁",
+  "devDependencies": {
+    "electron": "^28.3.3",
+    "electron-builder": "^24.0.0"
+  }
+}

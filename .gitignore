@@ -1,0 +1,40 @@
+# Node modules
+node_modules/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Model cache
+model_cache/
+*.pkl
+
+# Database backups
+*.bak
+*.db.bak.*
+
+# Logs
+*.log
+logs/
+
+# Temp files
+*.tmp
+*.temp
+temp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Build output
+dist/
+build/
+*.exe
+
+# Data files (large)
+*.db
+*.json.bak

@@ -1,0 +1,16 @@
+{
+  "total_return": 189.19,
+  "win_rate": 0.0,
+  "max_drawdown": 82.25,
+  "sharpe": 0.93,
+  "stop_loss_count": 10,
+  "stop_profit_count": 0,
+  "config": {
+    "BUY_THRESHOLD": 55,
+    "SELL_THRESHOLD": 15,
+    "STOP_LOSS": 0.15,
+    "STOP_PROFIT": 0.5,
+    "BUY_RATIO": 0.2,
+    "TOP_COUNT": 5
+  }
+}

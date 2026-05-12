@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>波段股票系统 v4.0 - 持仓管理版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1800px; margin: 0 auto; }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+        }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        
+        .btn {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            margin: 8px;
+            transition: all 0.3s;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .btn-sm { padding: 6px 15px; font-size: 12px; }
+        .btn-danger { background: #ef4444; }
+        .btn-success { background: #10b981; }
+        
+        /* 持仓录入面板 */
+        .input-panel {
+            background: rgba(102, 126, 234, 0.15);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+        
+        .input-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+        
+        .input-form {
+            display: grid;
+            grid-template-columns: 200px 120px 120px 80px 80px;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .input-label {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+        
+        .input-field {
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        select.input-field {
+            cursor: pointer;
+        }
+        
+        /* 持仓列表 */
+        .holdings-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .holding-card {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .holding-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .holding-name {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .holding-profit {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .profit-positive { color: #10b981; }
+        .profit-negative { color: #ef4444; }
+        
+        .holding-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 13px;
+        }
+        
+        .detail-item {
+            background: rgba(0,0,0,0.15);
+            padding: 8px;
+            border-radius: 6px;
+        }
+        
+        .detail-label { color: #888; font-size: 11px; }
+        .detail-value { color: #fff; font-size: 14px; }
+        
+        .holding-advice {
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            font-size: 13px;
+            border-left: 3px solid;
+        }
+        
+        .advice-buy { border-color: #10b981; color: #10b981; }
+        .advice-sell { border-color: #ef4444; color: #ef4444; }
+        .advice-hold { border-color: #6366f1; color: #6366f1; }
+        
+        /* 四栏分析面板 */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 400px;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+        
+        .panel-title { font-size: 16px; font-weight: bold; }
+        .panel-count { font-size: 12px; color: #888; }
+        
+        .stock-list {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        
+        .stock-card {
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .stock-name { font-size: 14px; font-weight: bold; }
+        .stock-score {
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        
+        .score-high { background: #10b981; }
+        .score-medium { background: #f59e0b; }
+        .score-low { background: #ef4444; }
+        .score-hold { background: #6366f1; }
+        
+        .stock-info {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+        
+        .stock-advice {
+            font-size: 12px;
+            padding: 8px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+        }
+        
+        /* 统计面板 */
+        .stats-panel {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+        }
+        
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 22px; font-weight: bold; }
+        .stat-label { font-size: 11px; color: #888; }
+        
+        /* 滚动条 */
+        .stock-list::-webkit-scrollbar { width: 5px; }
+        .stock-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>📊 波段股票分析系统 v4.0 - 持仓管理版</h1>
+            <div style="color:#888; font-size:14px;">股票池范围：30只波段股票 | 数据更新：<span id="updateTime">--</span></div>
+            <div>
+                <button class="btn" onclick="refreshData()">🔄 刷新数据</button>
+                <button class="btn btn-success" onclick="runAnalysis()">▶️ 运行分析</button>
+                <button class="btn" onclick="exportHoldings()">💾 导出持仓</button>
+            </div>
+        </div>
+        
+        <!-- 持仓录入面板 -->
+        <div class="input-panel">
+            <div class="input-header">📝 持仓数据录入（仅限股票池30只）</div>
+            
+            <div class="input-form">
+                <div class="input-group">
+                    <label class="input-label">股票代码（自动映射名称）</label>
+                    <select id="stockCode" class="input-field" onchange="updateStockName()">
+                        <option value="">选择股票...</option>
+                        <option value="605196.SH">华通线缆</option>
+                        <option value="688028.SH">沃尔德</option>
+                        <option value="688195.SH">芯源微</option>
+                        <option value="688233.SH">铂力特</option>
+                        <option value="688519.SH">天奈科技</option>
+                        <option value="002353.SZ">杰瑞股份</option>
+                        <option value="002384.SZ">东山精密</option>
+                        <option value="600183.SH">生益科技</option>
+                        <option value="603876.SH">鼎胜新材</option>
+                        <option value="603986.SH">兆易创新</option>
+                        <option value="688416.SH">恒玄科技</option>
+                        <option value="688521.SH">芯原股份</option>
+                        <option value="688676.SH">金迪克</option>
+                        <option value="300136.SZ">信维通导</option>
+                        <option value="603225.SH">新凤鸣</option>
+                        <option value="688308.SH">拓荆科技</option>
+                        <option value="688388.SH">嘉元科技</option>
+                        <option value="688556.SH">高测股份</option>
+                        <option value="600118.SH">中国卫星</option>
+                        <option value="601231.SH">环旭电子</option>
+                        <option value="688658.SH">悦康药业</option>
+                        <option value="688668.SH">鼎通股份</option>
+                        <option value="688788.SH">科思科技</option>
+                        <option value="002202.SZ">金风科技</option>
+                        <option value="002916.SZ">深南电路</option>
+                        <option value="300604.SZ">长川科技</option>
+                        <option value="603228.SH">景旺电子</option>
+                        <option value="688698.SH">博众精工</option>
+                        <option value="002460.SZ">赣锋锂业</option>
+                        <option value="300476.SZ">胜宏科技</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">持仓数量（股）</label>
+                    <input type="number" id="shares" class="input-field" placeholder="如：1000" min="0">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">持仓成本（元）</label>
+                    <input type="number" id="buyPrice" class="input-field" placeholder="如：45.20" step="0.01" min="0">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">买入日期</label>
+                    <input type="date" id="buyDate" class="input-field" value="2026-04-20">
+                </div>
+                
+                <div class="input-group">
+                    <button class="btn btn-success btn-sm" onclick="addHolding()">+ 添加</button>
+                </div>
+            </div>
+            
+            <!-- 已录入持仓列表 -->
+            <div class="holdings-list" id="holdingsList"></div>
+        </div>
+        
+        <!-- 统计面板 -->
+        <div class="stats-panel">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="holdCount">0</div>
+                    <div class="stat-label">持仓数量</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalCost">0</div>
+                    <div class="stat-label">总成本(元)</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalValue">0</div>
+                    <div class="stat-label">当前市值</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalProfit">0</div>
+                    <div class="stat-label">持仓盈亏</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="profitRate">0%</div>
+                    <div class="stat-label">收益率</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="avgScore">--</div>
+                    <div class="stat-label">平均评分</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 四栏分析面板 -->
+        <div class="analysis-grid">
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">🟢 买入推荐</span>
+                    <span class="panel-count" id="buyCount">0只</span>
+                </div>
+                <div class="stock-list" id="buyList"></div>
+            </div>
+            
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">🔵 持仓指导</span>
+                    <span class="panel-count" id="holdCount2">0只</span>
+                </div>
+                <div class="stock-list" id="holdList"></div>
+            </div>
+            
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">🔴 卖出建议</span>
+                    <span class="panel-count" id="sellCount">0只</span>
+                </div>
+                <div class="stock-list" id="sellList"></div>
+            </div>
+            
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">🟡 观望池</span>
+                    <span class="panel-count" id="watchCount">0只</span>
+                </div>
+                <div class="stock-list" id="watchList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 股票名称映射
+        const STOCK_NAMES = {
+            '605196.SH': '华通线缆', '688028.SH': '沃尔德', '688195.SH': '芯源微',
+            '688233.SH': '铂力特', '688519.SH': '天奈科技', '002353.SZ': '杰瑞股份',
+            '002384.SZ': '东山精密', '600183.SH': '生益科技', '603876.SH': '鼎胜新材',
+            '603986.SH': '兆易创新', '688416.SH': '恒玄科技', '688521.SH': '芯原股份',
+            '688676.SH': '金迪克', '300136.SZ': '信维通导', '603225.SH': '新凤鸣',
+            '688308.SH': '拓荆科技', '688388.SH': '嘉元科技', '688556.SH': '高测股份',
+            '600118.SH': '中国卫星', '601231.SH': '环旭电子', '688658.SH': '悦康药业',
+            '688668.SH': '鼎通股份', '688788.SH': '科思科技', '002202.SZ': '金风科技',
+            '002916.SZ': '深南电路', '300604.SZ': '长川科技', '603228.SH': '景旺电子',
+            '688698.SH': '博众精工', '002460.SZ': '赣锋锂业', '300476.SZ': '胜宏科技',
+        };
+        
+        // 持仓数据（保存到localStorage）
+        let holdings = JSON.parse(localStorage.getItem('stockHoldings') || '[]');
+        
+        // 分析数据
+        let analysisData = null;
+        
+        // 初始化
+        function init() {
+            renderHoldings();
+            loadData();
+        }
+        
+        // 更新股票名称
+        function updateStockName() {
+            const code = document.getElementById('stockCode').value;
+            // 名称已自动显示在option中
+        }
+        
+        // 添加持仓
+        function addHolding() {
+            const code = document.getElementById('stockCode').value;
+            const shares = parseInt(document.getElementById('shares').value);
+            const buyPrice = parseFloat(document.getElementById('buyPrice').value);
+            const buyDate = document.getElementById('buyDate').value;
+            
+            if (!code) {
+                alert('请选择股票代码！');
+                return;
+            }
+            if (!shares || shares <= 0) {
+                alert('请输入正确的持仓数量！');
+                return;
+            }
+            if (!buyPrice || buyPrice <= 0) {
+                alert('请输入正确的持仓成本！');
+                return;
+            }
+            
+            // 检查是否已存在
+            const existing = holdings.find(h => h.code === code);
+            if (existing) {
+                // 更新持仓
+                existing.shares = shares;
+                existing.buyPrice = buyPrice;
+                existing.buyDate = buyDate;
+            } else {
+                // 新增持仓
+                holdings.push({
+                    code: code,
+                    name: STOCK_NAMES[code],
+                    shares: shares,
+                    buyPrice: buyPrice,
+                    buyDate: buyDate
+                });
+            }
+            
+            // 保存到localStorage
+            localStorage.setItem('stockHoldings', JSON.stringify(holdings));
+            
+            // 清空输入
+            document.getElementById('stockCode').value = '';
+            document.getElementById('shares').value = '';
+            document.getElementById('buyPrice').value = '';
+            
+            // 重新渲染
+            renderHoldings();
+            
+            alert('持仓已添加！');
+        }
+        
+        // 删除持仓
+        function deleteHolding(code) {
+            holdings = holdings.filter(h => h.code !== code);
+            localStorage.setItem('stockHoldings', JSON.stringify(holdings));
+            renderHoldings();
+        }
+        
+        // 渲染持仓列表
+        function renderHoldings() {
+            const container = document.getElementById('holdingsList');
+            
+            if (holdings.length === 0) {
+                container.innerHTML = '<div style="color:#888;text-align:center;padding:20px;">暂无持仓数据，请添加持仓</div>';
+                document.getElementById('holdCount').textContent = '0';
+                return;
+            }
+            
+            container.innerHTML = holdings.map(h => `
+                <div class="holding-card">
+                    <div class="holding-header">
+                        <span class="holding-name">${h.name}</span>
+                        <button class="btn btn-danger btn-sm" onclick="deleteHolding('${h.code}')">删除</button>
+                    </div>
+                    <div class="holding-details">
+                        <div class="detail-item">
+                            <div class="detail-label">代码</div>
+                            <div class="detail-value">${h.code}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">数量</div>
+                            <div class="detail-value">${h.shares}股</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">成本</div>
+                            <div class="detail-value">${h.buyPrice}元</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">买入日期</div>
+                            <div class="detail-value">${h.buyDate}</div>
+                        </div>
+                    </div>
+                    <div class="holding-advice advice-hold" id="advice_${h.code}">
+                        等待分析数据...
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('holdCount').textContent = holdings.length;
+            
+            // 计算总成本
+            const totalCost = holdings.reduce((a, b) => a + b.shares * b.buyPrice, 0);
+            document.getElementById('totalCost').textContent = Math.round(totalCost);
+        }
+        
+        // 加载分析数据
+        function loadData() {
+            fetch('result.json')
+                .then(r => r.json())
+                .then(data => {
+                    analysisData = data;
+                    displayAnalysis(data);
+                    updateHoldingsAnalysis(data);
+                    document.getElementById('updateTime').textContent = data.update_time || '--';
+                })
+                .catch(e => {
+                    document.getElementById('buyList').innerHTML = '<div style="color:#888;text-align:center;">请先运行分析</div>';
+                });
+        }
+        
+        // 更新持仓分析
+        function updateHoldingsAnalysis(data) {
+            if (!data || !data.stocks) return;
+            
+            const stocks = data.stocks;
+            let totalValue = 0;
+            let totalProfit = 0;
+            let scores = [];
+            
+            holdings.forEach(h => {
+                const analysis = stocks.find(s => s.code === h.code);
+                
+                if (analysis) {
+                    const currentPrice = analysis.close;
+                    const profit = (currentPrice - h.buyPrice) / h.buyPrice * 100;
+                    const profitAmount = (currentPrice - h.buyPrice) * h.shares;
+                    const holdDays = Math.floor((new Date() - new Date(h.buyDate)) / 86400000);
+                    
+                    totalValue += currentPrice * h.shares;
+                    totalProfit += profitAmount;
+                    scores.push(analysis.score);
+                    
+                    // 更新建议
+                    const adviceEl = document.getElementById(`advice_${h.code}`);
+                    if (adviceEl) {
+                        adviceEl.className = `holding-advice ${profit > 15 ? 'advice-sell' : profit < -5 ? 'advice-sell' : 'advice-hold'}`;
+                        adviceEl.innerHTML = `
+                            <div>现价: ${currentPrice}元 | 盈亏: <span style="color:${profit>=0?'#10b981':'#ef4444'}">${profit.toFixed(1)}%</span></div>
+                            <div>评分: ${analysis.score}分 | 持仓: ${holdDays}天</div>
+                            <div style="margin-top:5px;font-weight:bold;">${getHoldingAdvice(profit, analysis.score, holdDays)}</div>
+                        `;
+                    }
+                }
+            });
+            
+            // 更新统计
+            const totalCost = holdings.reduce((a, b) => a + b.shares * b.buyPrice, 0);
+            document.getElementById('totalValue').textContent = Math.round(totalValue);
+            document.getElementById('totalProfit').textContent = Math.round(totalProfit);
+            document.getElementById('profitRate').textContent = ((totalValue - totalCost) / totalCost * 100).toFixed(1) + '%';
+            document.getElementById('avgScore').textContent = scores.length > 0 ? Math.round(scores.reduce((a,b) => a+b) / scores.length) : '--';
+            document.getElementById('holdCount2').textContent = holdings.length;
+        }
+        
+        // 显示分析数据
+        function displayAnalysis(data) {
+            const stocks = data.stocks || [];
+            
+            // 分类（排除已持仓）
+            const holdingCodes = holdings.map(h => h.code);
+            const buyStocks = stocks.filter(s => s.score >= 60 && !holdingCodes.includes(s.code));
+            const sellStocks = stocks.filter(s => s.score < 15);
+            const watchStocks = stocks.filter(s => s.score >= 15 && s.score < 60 && !holdingCodes.includes(s.code));
+            
+            // 买入推荐
+            document.getElementById('buyCount').textContent = buyStocks.length + '只';
+            document.getElementById('buyList').innerHTML = buyStocks.map(s => `
+                <div class="stock-card">
+                    <div class="stock-header">
+                        <span class="stock-name">${s.name}</span>
+                        <span class="stock-score score-high">${s.score}</span>
+                    </div>
+                    <div class="stock-info">价格: ${s.close}元 | 涨幅概率: ${s.score}%</div>
+                    <div class="stock-advice">${s.advice}</div>
+                </div>
+            `).join('');
+            
+            // 持仓指导
+            const holdStocks = stocks.filter(s => holdingCodes.includes(s.code));
+            document.getElementById('holdList').innerHTML = holdStocks.map(s => {
+                const h = holdings.find(h => h.code === s.code);
+                const profit = (s.close - h.buyPrice) / h.buyPrice * 100;
+                return `
+                    <div class="stock-card">
+                        <div class="stock-header">
+                            <span class="stock-name">${s.name}</span>
+                            <span class="stock-score ${profit >= 0 ? 'score-high' : 'score-low'}">${profit.toFixed(1)}%</span>
+                        </div>
+                        <div class="stock-info">评分: ${s.score} | 成本: ${h.buyPrice}元</div>
+                        <div class="stock-advice">${getHoldingAdvice(profit, s.score, 0)}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            // 卖出建议
+            document.getElementById('sellCount').textContent = sellStocks.length + '只';
+            document.getElementById('sellList').innerHTML = sellStocks.map(s => `
+                <div class="stock-card">
+                    <div class="stock-header">
+                        <span class="stock-name">${s.name}</span>
+                        <span class="stock-score score-low">${s.score}</span>
+                    </div>
+                    <div class="stock-info">跌幅概率: ${100-s.score}%</div>
+                    <div class="stock-advice">${s.advice}</div>
+                </div>
+            `).join('');
+            
+            // 观望池
+            document.getElementById('watchCount').textContent = watchStocks.length + '只';
+            document.getElementById('watchList').innerHTML = watchStocks.map(s => `
+                <div class="stock-card">
+                    <div class="stock-header">
+                        <span class="stock-name">${s.name}</span>
+                        <span class="stock-score score-medium">${s.score}</span>
+                    </div>
+                    <div class="stock-info">价格: ${s.close}元</div>
+                    <div class="stock-advice">${s.advice}</div>
+                </div>
+            `).join('');
+        }
+        
+        // 持仓建议生成
+        function getHoldingAdvice(profit, score, days) {
+            if (profit >= 25) return '✅ 已达止盈线(25%)，建议分批卖出';
+            if (profit >= 15) return '盈利可观，建议部分止盈30-50%';
+            if (profit >= 5) return '小幅盈利，可继续持有';
+            if (profit >= -5) return '轻微亏损，继续观察';
+            if (profit >= -10) return '⚠️ 接近止损线(-10%)，密切关注';
+            return '🔴 触发止损线，建议果断卖出';
+        }
+        
+        // 刷新数据
+        function refreshData() {
+            loadData();
+        }
+        
+        // 运行分析
+        function runAnalysis() {
+            alert('请在命令行运行: python analyzer_v4.py');
+        }
+        
+        // 导出持仓
+        function exportHoldings() {
+            const data = JSON.stringify(holdings, null, 2);
+            const blob = new Blob([data], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'holdings.json';
+            a.click();
+            alert('持仓数据已导出！');
+        }
+        
+        // 初始化
+        init();
+        
+        // 自动刷新（每5分钟）
+        setInterval(loadData, 300000);
+    </script>
+</body>
+</html>

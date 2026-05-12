@@ -1,0 +1,21 @@
+{
+  "strategy": "\u7b80\u5316\u6a21\u578b - \u6838\u5fc3\u7279\u5f8110\u4e2a",
+  "features": [
+    "pct_chg",
+    "ma5_ratio",
+    "ma10_ratio",
+    "rsi6",
+    "macd",
+    "k",
+    "d",
+    "volume",
+    "amplitude",
+    "turnover"
+  ],
+  "model_params": "80\u8fed\u4ee3/3\u6df1\u5ea6",
+  "best_threshold": 50,
+  "win_rate": 37.65,
+  "original": 44.2,
+  "improvement": -6.55,
+  "timestamp": "2026-04-23T20:51:26.338016"
+}

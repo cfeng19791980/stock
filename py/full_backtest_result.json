@@ -1,0 +1,72 @@
+{
+  "test_time": "2026-04-20T20:00:21.969805",
+  "stock_count": 30,
+  "results": [
+    {
+      "name": "基准(无调整)",
+      "signals": 2229,
+      "correct": 2226,
+      "hit_rate": 99.87,
+      "avg_profit": 8.9,
+      "total_profit": 19844.8
+    },
+    {
+      "name": "中调整10%+动态阈值",
+      "signals": 2150,
+      "correct": 2147,
+      "hit_rate": 99.86,
+      "avg_profit": 8.97,
+      "total_profit": 19288.2
+    },
+    {
+      "name": "不对称(弱市重罚)",
+      "signals": 2134,
+      "correct": 2131,
+      "hit_rate": 99.86,
+      "avg_profit": 8.95,
+      "total_profit": 19093.63
+    },
+    {
+      "name": "轻调整+动态阈值",
+      "signals": 2174,
+      "correct": 2171,
+      "hit_rate": 99.86,
+      "avg_profit": 8.95,
+      "total_profit": 19449.3
+    },
+    {
+      "name": "重调整+动态阈值",
+      "signals": 2128,
+      "correct": 2124,
+      "hit_rate": 99.81,
+      "avg_profit": 9.0,
+      "total_profit": 19160.1
+    },
+    {
+      "name": "超重调整20%",
+      "signals": 2097,
+      "correct": 2092,
+      "hit_rate": 99.76,
+      "avg_profit": 8.96,
+      "total_profit": 18798.78
+    }
+  ],
+  "best": {
+    "name": "基准(无调整)",
+    "signals": 2229,
+    "correct": 2226,
+    "hit_rate": 99.87,
+    "avg_profit": 8.9,
+    "total_profit": 19844.8
+  },
+  "recommendation": {
+    "config": "基准(无调整)",
+    "factors": [
+      [
+        99,
+        1.0
+      ]
+    ],
+    "dynamic_threshold": false
+  }
+}
