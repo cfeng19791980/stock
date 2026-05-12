@@ -29,7 +29,10 @@ DB_PATH = os.path.join(BASE_DIR, 'stocks.db')
 RS_V5 = os.path.join(BASE_DIR, 'result_v5.json')
 COLLECTOR_LOG = os.path.join(BASE_DIR, 'stream_collector.log')
 START_LOG = os.path.join(BASE_DIR, 'start.log')
-
+LIVE_PRED_PATH = os.path.join(BASE_DIR, 'live_predictions.json')
+LIVE_RUNNER_LOG = os.path.join(BASE_DIR, 'logs', 'live_runner.log')
+WATCHDOG_STATE = os.path.join(BASE_DIR, '.watchdog_state.json')
+WATCHDOG_LOG = os.path.join(BASE_DIR, 'watchdog.log')
 
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -216,9 +219,100 @@ def get_v5_result() -> Optional[Dict]:
             'top_buy': buy_stocks[:5],
             'top_sell': sell_stocks[:3],
         }
+        return None
+
+
+# ── 实时预测链路监控 ──
+
+def get_live_runner_heartbeat() -> Dict:
+    """实时预测心跳监控：读 live_predictions.json 最新记录"""
+    try:
+        if not os.path.exists(LIVE_PRED_PATH):
+            return {'alive': False, 'error': '文件不存在'}
+        
+        with open(LIVE_PRED_PATH, 'r', encoding='utf-8') as f:
+            predictions = json.load(f)
+        
+        if not predictions:
+            return {'alive': False, 'error': '无数据'}
+        
+        latest = predictions[-1]
+        last_time = latest.get('timestamp', '')
+        
+        # 计算距现在秒数
+        now = datetime.now()
+        page_age_sec = -1
+        if last_time:
+            try:
+                last_dt = datetime.strptime(last_time, '%Y-%m-%d %H:%M:%S')
+                page_age_sec = (now - last_dt).total_seconds()
+            except ValueError:
+                pass
+        
+        alive = page_age_sec >= 0 and page_age_sec < 600  # 10分钟无数据算失联
+        
+        return {
+            'alive': alive,
+            'last_time': last_time or '无数据',
+            'age_sec': page_age_sec,
+            'strong_stocks': len(latest.get('strong_stocks', [])),
+            'weak_stocks': len(latest.get('weak_stocks', [])),
+            'qwen_picks': len(latest.get('qwen_picks', [])),
+        }
+    except Exception as e:
+        return {'alive': False, 'error': str(e)}
+
+
+def get_watchdog_state() -> Dict:
+    """看门狗状态监控"""
+    try:
+        if not os.path.exists(WATCHDOG_STATE):
+            return {'error': '状态文件不存在'}
+        
+        with open(WATCHDOG_STATE, 'r', encoding='utf-8') as f:
+            state = json.load(f)
+        
+        return {
+            'restart_count': state.get('restart_count', 0),
+            'consecutive_empty': state.get('consecutive_empty', 0),
+            'last_alert_time': state.get('last_alert_time', ''),
+            'last_restart_time': state.get('last_restart_time', ''),
+            'date': state.get('date', ''),
+        }
+    except Exception as e:
+        return {'error': str(e)}
+
+
+def get_live_runner_log_last(max_lines: int = 6) -> Optional[list]:
+    """读取 live_runner 日志最新行"""
+    try:
+        if not os.path.exists(LIVE_RUNNER_LOG):
+            return None
+        
+        with open(LIVE_RUNNER_LOG, 'r', encoding='utf-8', errors='ignore') as f:
+            lines = f.readlines()
+        
+        valid = [l for l in lines if any(tag in l for tag in ['INFO', 'ERROR', 'WARNING'])]
+        if valid:
+            return valid[-max_lines:]
     except Exception:
         return None
 
+
+def get_watchdog_log_last(max_lines: int = 4) -> Optional[list]:
+    """读取看门狗日志最新行"""
+    try:
+        if not os.path.exists(WATCHDOG_LOG):
+            return None
+        
+        with open(WATCHDOG_LOG, 'r', encoding='utf-8', errors='ignore') as f:
+            lines = f.readlines()
+        
+        valid = [l for l in lines if any(tag in l for tag in ['INFO', 'ERROR', 'WARNING'])]
+        if valid:
+            return valid[-max_lines:]
+    except Exception:
+        return None
 
 def get_collector_log_last(max_lines: int = 8) -> Optional[list]:
     """读取采集器日志最新行"""
@@ -326,11 +420,70 @@ def print_panel():
             print(f'  🔴 建议卖出:')
             for s in v5['top_sell']:
                 print(f'    {s["name"]:12s}  评分 {s["score"]}')
+    # ── ⑤ 实时预测链路 ──
+    live_hb = get_live_runner_heartbeat()
+    print(f'\n🎯 实时预测链路:')
+    if live_hb.get('alive'):
+        print(f'  状态:        🟢 正常运行')
+        age_str = f'{live_hb["age_sec"]:.0f}s前' if live_hb['age_sec'] >= 0 else '?'
+        print(f'  最新预测:    {live_hb["last_time"]} ({age_str})')
+        print(f'  强势股:      {live_hb.get("strong_stocks", 0)}只 | 弱势股: {live_hb.get("weak_stocks", 0)}只')
+        print(f'  Qwen分析:    {live_hb.get("qwen_picks", 0)}只')
+    else:
+        if live_hb.get('age_sec', -1) >= 0:
+            age_min = int(live_hb['age_sec'] / 60)
+            print(f'  状态:        🔴 无新数据({age_min}min)')
+            print(f'  最新预测:    {live_hb["last_time"]} ({age_min}分钟前)')
+        else:
+            print(f'  状态:        ⚪ 未启动')
+            print(f'  错误:        {live_hb.get("error", "未知")}')
 
-    # ── ⑤ 最近日志 ──
-    logs = get_collector_log_last(6)
+    # ── ⑥ 看门狗状态 ──
+    wd_state = get_watchdog_state()
+    print(f'\n🐕 看门狗状态:')
+    if 'error' not in wd_state:
+        print(f'  重启次数:    {wd_state.get("restart_count", 0)}次')
+        print(f'  连续空数据:  {wd_state.get("consecutive_empty", 0)}轮')
+        if wd_state.get('last_alert_time'):
+            print(f'  最后告警:    {wd_state["last_alert_time"]}')
+        if wd_state.get('last_restart_time'):
+            print(f'  最后重启:    {wd_state["last_restart_time"]}')
+    else:
+        print(f'  错误:        {wd_state.get("error", "未知")}')
+
+    # ── ⑦ 最近日志 ──
+    # live_runner 日志
+    live_logs = get_live_runner_log_last(4)
+    if live_logs:
+        print(f'\n📋 实时预测日志:')
+        for line in live_logs:
+            line = line.strip()
+            if 'ERROR' in line:
+                icon = '❌'
+            elif 'WARNING' in line:
+                icon = '⚠️'
+            else:
+                icon = ''
+            print(f'  {icon} {line[:90]}')
+
+    # 看门狗日志
+    wd_logs = get_watchdog_log_last(3)
+    if wd_logs:
+        print(f'\n📋 看门狗日志:')
+        for line in wd_logs:
+            line = line.strip()
+            if 'ERROR' in line:
+                icon = '❌'
+            elif 'WARNING' in line:
+                icon = '⚠️'
+            else:
+                icon = ''
+            print(f'  {icon} {line[:90]}')
+
+    # 采集器日志
+    logs = get_collector_log_last(3)
     if logs:
-        print(f'\n📋 最近日志:')
+        print(f'\n📋 采集器日志:')
         for line in logs:
             line = line.strip()
             if '[ERROR]' in line:
@@ -341,6 +494,8 @@ def print_panel():
                 icon = ''
             print(f'  {icon} {line[:90]}')
 
+    print(f'\n{"-" * 50}')
+    print('3秒自动刷新 | Ctrl+C 退出')
     print(f'\n{"-" * 50}')
     print('3秒自动刷新 | Ctrl+C 退出')
 

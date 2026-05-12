@@ -2,7 +2,7 @@
 """
 采集器看门狗 - watchdog_cron.py
 
-每5分钟由 cron 调用一次，监测流式数据采集器是否正常运行。
+每 5 分钟由 cron 调用一次，监测 live_runner.py 是否正常运行。
 如果失联则自动重启；如果数据异常则 Windows 弹窗告警。
 
 Cron 配置:
@@ -11,9 +11,9 @@ Cron 配置:
 
 检查逻辑:
   1. 是否在交易时间 (9:30-15:00 工作日)
-  2. start_collector.py 进程是否在运行
+2. live_runner.py 进程是否在运行
   3. minute_flow_data 表最近10分钟是否有新数据
-  4. 连续三轮空数据 -> 异常告警
+3. live_predictions.json 最近 10 分钟是否有新数据
 
 告警方式:
   - Windows toast 弹窗 (PowerShell popup)
@@ -106,7 +106,7 @@ def is_trading_time() -> bool:
 
 def check_collector_process() -> dict:
     """
-    检查 start_collector.py 和 Python 进程状态。
+    检查 live_runner.py 和 Python 进程状态。
     
     Returns:
         {'running': bool, 'pids': [int], 'detail': str}
@@ -126,16 +126,16 @@ def check_collector_process() -> dict:
                     pid = parts[1].strip('"')
                     python_pids.append(pid)
 
-        # 检查是否有 start_collector 或 stream_collector 在命令行参数中
+        # 检查是否有 live_runner 在命令行参数中
         has_collector = False
         if python_pids:
             for pid in python_pids:
                 try:
                     cmdline = subprocess.run(
-                        ["tasklist", "/fi", f"PID eq {pid}", "/fo", "csv", "/nh"],
+                        ["wmic", "process", "where", f"ProcessId={pid}", "get", "CommandLine"],
                         capture_output=True, text=True, timeout=2
                     ).stdout.lower()
-                    if "start_collector" in cmdline or "stream_collector" in cmdline:
+                    if "live_runner" in cmdline:
                         has_collector = True
                         break
                 except Exception:
@@ -148,7 +148,7 @@ def check_collector_process() -> dict:
                     ["wmic", "process", "where", "name='python.exe'", "get", "commandline"],
                     capture_output=True, text=True, timeout=5
                 ).stdout.lower()
-                has_collector = "start_collector" in wmic_out or "stream_collector" in wmic_out
+                has_collector = "live_runner" in wmic_out
             except Exception:
                 pass
 
@@ -242,7 +242,7 @@ def check_db_heartbeat() -> dict:
 
 def start_collector() -> bool:
     """
-    启动采集器（start_collector.py）。
+    启动实时预测链路（live_runner.py）。
     使用 subprocess.Popen 新开窗口，不阻塞。
     
     Returns:
@@ -252,22 +252,22 @@ def start_collector() -> bool:
         # 先检查是否已经在运行
         proc_check = check_collector_process()
         if proc_check["running"]:
-            logger.info("采集器已在运行，跳过启动")
+            logger.info("实时预测链路已在运行，跳过启动")
             return True
 
-        # 启动新的采集进程（新开窗口）
-        script = os.path.join(BASE_DIR, "start_collector.py")
+        # 启动新的实时预测进程（新开窗口）
+        script = os.path.join(BASE_DIR, "live_runner.py")
         subprocess.Popen(
-            ["python", script],
+            ["python", script, "--once"],
             cwd=BASE_DIR,
             creationflags=subprocess.CREATE_NEW_CONSOLE,
             shell=True,
         )
-        logger.info("采集器已启动（新窗口）")
+        logger.info("实时预测链路已启动（新窗口）")
         return True
 
     except Exception as e:
-        logger.error(f"启动采集器失败: {e}")
+        logger.error(f"启动实时预测链路失败: {e}")
         return False
 
 
@@ -338,8 +338,12 @@ def main():
                 alerts.append(("🔄 采集器重启", f"采集器于{state['last_restart_time']}自动重启"))
             else:
                 alerts.append(("❌ 重启失败", "采集器进程未运行且自动重启失败，请手动检查"))
+                # 重启失败时弹出 Windows 警告
+                show_windows_alert("❌ CSI10 重启失败", "采集器进程未运行且自动重启失败，请手动检查")
         else:
             alerts.append(("❌ 重启超限", f"今日已重启{state['restart_count']}次，请手动检查"))
+            # 重启超限时弹出 Windows 警告
+            show_windows_alert("❌ CSI10 重启超限", f"今日已重启{state['restart_count']}次，请手动检查")
 
     elif not hb["has_data"]:
         # 进程在跑但没数据
