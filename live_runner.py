@@ -1,25 +1,25 @@
 # -*- coding: utf-8 -*-
 """
-live_runner.py — 实时开盘链路启动器（带日志系统）
-整合腾讯实时数据 + Qwen多空分析，每5分钟一轮
+live_runner.py â å®æ¶å¼çé¾è·¯å¯å¨å¨ï¼å¸¦æ¥å¿ç³»ç»ï¼
+æ´åè¾è®¯å®æ¶æ°æ® + Qwenå¤ç©ºåæï¼æ¯5åéä¸è½®
 
-日志:
-  logs/live_runner_YYYY-MM-DD.log  — 详细运行日志（自动轮转）
-  logs/live_predictions.log        — 精简预测记录
+æ¥å¿:
+  logs/live_runner_YYYY-MM-DD.log  â è¯¦ç»è¿è¡æ¥å¿ï¼èªå¨è½®è½¬ï¼
+  logs/live_predictions.log        â ç²¾ç®é¢æµè®°å½
   
-用法:
-  python live_runner.py            # 连续运行（每5分钟一轮）
-  python live_runner.py --once     # 只跑一轮
-  python live_runner.py --interval 10  # 每10分钟一轮
-  python live_runner.py --rounds 6     # 跑6轮后自动退出
-  python live_runner.py --daemon       # 后台静默运行（无打印）
+ç¨æ³:
+  python live_runner.py            # è¿ç»­è¿è¡ï¼æ¯5åéä¸è½®ï¼
+  python live_runner.py --once     # åªè·ä¸è½®
+  python live_runner.py --interval 10  # æ¯10åéä¸è½®
+  python live_runner.py --rounds 6     # è·6è½®åèªå¨éåº
+  python live_runner.py --daemon       # åå°éé»è¿è¡ï¼æ æå°ï¼
 """
 
 import sys, os, time, json, logging, gc, subprocess
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 
-# ��e psutil��1%( PowerShell
+# Õüe psutil1%( PowerShell
 try:
     import psutil
     HAS_PSUTIL = True
@@ -28,7 +28,7 @@ except ImportError:
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 
-# ��e psutil��1%( PowerShell
+# Õüe psutil1%( PowerShell
 try:
     import psutil
     HAS_PSUTIL = True
@@ -40,19 +40,19 @@ from logging.handlers import RotatingFileHandler
 
 sys.path.insert(0, r'E:\csi10')
 from realtime_fetcher import build_realtime_snapshot_v2, fetch_realtime
-from llm_factors.factor_fusion import get_qwen_bull_bear
+from llm_factors.qwen_bull_bear import get_qwen_bull_bear
 
 BASE_DIR = r'E:\csi10'
 LOG_DIR = os.path.join(BASE_DIR, 'logs')
 HISTORY_PATH = os.path.join(BASE_DIR, 'live_predictions.json')
 
-# ====== 日志系统 ======
+# ====== æ¥å¿ç³»ç» ======
 
 def setup_logging(daemon_mode=False):
-    """初始化日志系统"""
+    """åå§åæ¥å¿ç³»ç»"""
     os.makedirs(LOG_DIR, exist_ok=True)
     
-    # 主日志文件（每天滚动，保留7天）
+    # ä¸»æ¥å¿æä»¶ï¼æ¯å¤©æ»å¨ï¼ä¿ç7å¤©ï¼
     log_file = os.path.join(LOG_DIR, f'live_runner.log')
     handler = RotatingFileHandler(log_file, maxBytes=5*1024*1024, backupCount=7, encoding='utf-8')
     handler.setFormatter(logging.Formatter(
@@ -60,15 +60,15 @@ def setup_logging(daemon_mode=False):
         datefmt='%H:%M:%S'
     ))
     
-    # 根日志器
+    # æ ¹æ¥å¿å¨
     logger = logging.getLogger('live_runner')
     logger.setLevel(logging.DEBUG)
     
-    # 避免重复添加handler
+    # é¿åéå¤æ·»å handler
     if not logger.handlers:
         logger.addHandler(handler)
         
-        # 控制台输出（daemon模式不打印）
+        # æ§å¶å°è¾åºï¼daemonæ¨¡å¼ä¸æå°ï¼
         if not daemon_mode:
             console = logging.StreamHandler()
             console.setFormatter(logging.Formatter('%(message)s'))
@@ -80,23 +80,23 @@ def setup_logging(daemon_mode=False):
 def get_logger():
     return logging.getLogger('live_runner')
 
-# ====== 核心逻辑 ======
+# ====== æ ¸å¿é»è¾ ======
 
 def run_round(round_num, logger=None):
-    """执行一轮实时���析"""
+    """æ§è¡ä¸è½®å®æ¶ï¿½ï¿½ï¿½æ"""
     if logger is None:
         logger = get_logger()
     
     t0 = time.time()
     
-    # 1. 采集实时数据
+    # 1. ééå®æ¶æ°æ®
     data, scored, indices = build_realtime_snapshot_v2()
     
     if not data or len(data) < 5:
-        logger.warning(f"[{round_num}] 数据不足 ({len(data) if data else 0}只)，跳过")
+        logger.warning(f"[{round_num}] æ°æ®ä¸è¶³ ({len(data) if data else 0}åª)ï¼è·³è¿")
         return None
     
-    # 2. 大盘状态
+    # 2. å¤§çç¶æ
     index_line = ' | '.join([
         f"{v['name'].replace('=','').replace('\"','').split()[-1] if ' ' in str(v['name']) else v['name']} {v['pct']:+.2f}%"
         for v in indices.values()
@@ -105,18 +105,18 @@ def run_round(round_num, logger=None):
     top5 = scored[:5]
     bottom3 = scored[-3:]
     
-    # 3. 记录第一轮摘要
+    # 3. è®°å½ç¬¬ä¸è½®æè¦
     if round_num <= 1:
         logger.info(f"{'='*60}")
-        logger.info(f"  CSI10 实时链路启动 | {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        logger.info(f"  CSI10 å®æ¶é¾è·¯å¯å¨ | {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         logger.info(f"{'='*60}")
     
     logger.info(f"[{round_num:3d}] {index_line}")
     
-    # 4. Qwen多空分析（只看最强和最弱各1只）
+    # 4. Qwenå¤ç©ºåæï¼åªçæå¼ºåæå¼±å1åªï¼
     qwen_results = []
     
-    for label, s in [('强势', top5[0]), ('弱势', bottom3[0])]:
+    for label, s in [('å¼ºå¿', top5[0]), ('å¼±å¿', bottom3[0])]:
         row_data = {
             'date': datetime.now().strftime('%Y-%m-%d'),
             'close': s['price'],
@@ -137,8 +137,8 @@ def run_round(round_num, logger=None):
         bull = result.get('bull', '')[:25]
         bear = result.get('bear', '')[:25]
         
-        icon = "🟢" if score > 0 else "🔴"
-        logger.info(f"[{round_num:3d}] {icon} {label} {s['name']:<8} {s['price']:>8.2f} {s['pct_change']:>+6.2f}% | 多空{score:>+4d} | ↑{bull} | ↓{bear}")
+        icon = "ð¢" if score > 0 else "ð´"
+        logger.info(f"[{round_num:3d}] {icon} {label} {s['name']:<8} {s['price']:>8.2f} {s['pct_change']:>+6.2f}% | å¤ç©º{score:>+4d} | â{bull} | â{bear}")
         
         result['code'] = s['code']
         result['name'] = s['name']
@@ -147,7 +147,7 @@ def run_round(round_num, logger=None):
         result['label'] = label
         qwen_results.append(result)
     
-    # 5. 打包保存
+    # 5. æåä¿å­
     elapsed = round(time.time() - t0, 1)
     
     round_result = {
@@ -162,15 +162,15 @@ def run_round(round_num, logger=None):
     
     _save_round(round_result)
     
-    # 精简日志
+    # ç²¾ç®æ¥å¿
     avg_score = sum(s['score'] for s in scored) / len(scored)
-    logger.info(f"[{round_num:3d}] ✅ {elapsed:.0f}s | 平均分{avg_score:.0f} | 强势{top5[0]['name']}({top5[0]['pct_change']:+.1f}%) 弱势{bottom3[0]['name']}({bottom3[0]['pct_change']:+.1f}%)")
+    logger.info(f"[{round_num:3d}] â {elapsed:.0f}s | å¹³åå{avg_score:.0f} | å¼ºå¿{top5[0]['name']}({top5[0]['pct_change']:+.1f}%) å¼±å¿{bottom3[0]['name']}({bottom3[0]['pct_change']:+.1f}%)")
     
     return round_result
 
 
 def _save_round(result):
-    """追加保存"""
+    """è¿½å ä¿å­"""
     existing = []
     if os.path.exists(HISTORY_PATH):
         try:
@@ -188,12 +188,12 @@ def _save_round(result):
 
 
 def show_summary(logger=None):
-    """显示累计统计"""
+    """æ¾ç¤ºç´¯è®¡ç»è®¡"""
     if logger is None:
         logger = get_logger()
     
     if not os.path.exists(HISTORY_PATH):
-        logger.info("暂无运行记录")
+        logger.info("ææ è¿è¡è®°å½")
         return
     
     with open(HISTORY_PATH, 'r', encoding='utf-8') as f:
@@ -205,35 +205,35 @@ def show_summary(logger=None):
     latest = history[-1]
     
     logger.info(f"\n{'='*60}")
-    logger.info(f"  运行统计: {len(history)} 轮 | {latest['time'][:19]}")
+    logger.info(f"  è¿è¡ç»è®¡: {len(history)} è½® | {latest['time'][:19]}")
     logger.info(f"{'='*60}")
     
-    # 统计大盘趋势
+    # ç»è®¡å¤§çè¶å¿
     first = history[0]
     for k in latest.get('indices', {}):
         if k in first.get('indices', {}):
             f_v = first['indices'][k]
             l_v = latest['indices'][k]
             change = l_v['pct'] - f_v['pct']
-            icon = "↗" if change > 0.1 else "↘" if change < -0.1 else "→"
+            icon = "â" if change > 0.1 else "â" if change < -0.1 else "â"
             name = str(l_v['name']).replace('=','').replace('"','').split()[-1] if ' ' in str(l_v['name']) else l_v['name']
-            logger.info(f"  {icon} {name}: 首轮{f_v['pct']:+.2f}% → 最新{l_v['pct']:+.2f}% (变动{change:+.2f}%)")
+            logger.info(f"  {icon} {name}: é¦è½®{f_v['pct']:+.2f}% â ææ°{l_v['pct']:+.2f}% (åå¨{change:+.2f}%)")
     
-    logger.info(f"  最近Qwen分析:")
+    logger.info(f"  æè¿Qwenåæ:")
     for r in latest.get('qwen_picks', []):
         score = r.get('score', 0)
-        icon = "🟢" if score > 0 else "🔴" if score < 0 else "⚪"
-        logger.info(f"  {icon} {r['name']}: 多空评分{score} | {r.get('bull','')[:30]}")
+        icon = "ð¢" if score > 0 else "ð´" if score < 0 else "âª"
+        logger.info(f"  {icon} {r['name']}: å¤ç©ºè¯å{score} | {r.get('bull','')[:30]}")
 
 
 def run_continuous(interval_min=5, max_rounds=0, daemon=False):
-    """连续运行"""
+    """è¿ç»­è¿è¡"""
     logger = setup_logging(daemon_mode=daemon)
     
     logger.info(f"{'#'*60}")
-    logger.info(f"  🔄 CSI10 实时链路启动")
-    logger.info(f"  间隔: {interval_min}分钟 | 轮数: {'无限' if max_rounds==0 else str(max_rounds)}")
-    logger.info(f"  时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    logger.info(f"  ð CSI10 å®æ¶é¾è·¯å¯å¨")
+    logger.info(f"  é´é: {interval_min}åé | è½®æ°: {'æ é' if max_rounds==0 else str(max_rounds)}")
+    logger.info(f"  æ¶é´: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     logger.info(f"  PID: {os.getpid()}")
     logger.info(f"{'#'*60}")
     
@@ -243,55 +243,49 @@ def run_continuous(interval_min=5, max_rounds=0, daemon=False):
             break
         
         try:
-        try:
             result = run_round(round_num + 1, logger)
             if result:
                 round_num += 1
                 
-                # :6�6�X
+                # X
                 gc.collect()
                 
-                # ѧ�X(ŵ
+                # XÑ§
                 try:
                     if HAS_PSUTIL:
                         memory_percent = psutil.virtual_memory().percent
-                        logger.info(f"  �X(�: {memory_percent}%")
+                        logger.info(f"X(: {memory_percent}%")
                     else:
-                        # ( PowerShell �օX(�
+                        # ( PowerShell åâX
                         mem_result = subprocess.run(
                             ['powershell', '-Command', '(Get-Counter "\Memory\Available MBytes" | Select-Object -ExpandProperty CounterSamples | Select-Object -ExpandProperty CookedValue) / (Get-CimInstance Win32_OperatingSystem).TotalVisibleMemorySize * 100'],
                             capture_output=True, text=True, timeout=5
                         )
                         if mem_result.returncode == 0:
                             memory_percent = 100 - float(mem_result.stdout.strip())
-                            logger.info(f"  �X(�: {memory_percent:.2f}%")
+                            logger.info(f"X(: {memory_percent:.2f}%")
                 except Exception as e:
-                    logger.warning(f"  �Xѧ1%: {e}")
-
-            logger.info("\n⏹️ 用户中断")
-            show_summary(logger)
-            break
+                    logger.warning(f"内存监控失败: {e}")
+        
         except Exception as e:
             logger.error(f"[{round_num+1}] ❌ 错误: {e}", exc_info=True)
-        
-        if max_rounds == 0 or round_num < max_rounds:
             next_time = datetime.fromtimestamp(time.time() + interval_min * 60).strftime('%H:%M')
-            logger.info(f"  ⏳ 等待 {interval_min} 分钟 (下一轮 ≈ {next_time})")
+            logger.info(f"  â³ ç­å¾ {interval_min} åé (ä¸ä¸è½® â {next_time})")
             
             for i in range(interval_min * 60, 0, -1):
                 time.sleep(1)
     
     show_summary(logger)
-    logger.info("🛑 链路已停止")
+    logger.info("ð é¾è·¯å·²åæ­¢")
 
 
 if __name__ == '__main__':
     import argparse
-    parser = argparse.ArgumentParser(description='CSI10 实时开盘链路')
-    parser.add_argument('--once', action='store_true', help='只跑一轮')
-    parser.add_argument('--interval', type=int, default=5, help='间隔分钟数')
-    parser.add_argument('--rounds', type=int, default=0, help='运行轮数 (0=无限)')
-    parser.add_argument('--daemon', action='store_true', help='后台静默模式')
+    parser = argparse.ArgumentParser(description='CSI10 å®æ¶å¼çé¾è·¯')
+    parser.add_argument('--once', action='store_true', help='åªè·ä¸è½®')
+    parser.add_argument('--interval', type=int, default=5, help='é´éåéæ°')
+    parser.add_argument('--rounds', type=int, default=0, help='è¿è¡è½®æ° (0=æ é)')
+    parser.add_argument('--daemon', action='store_true', help='åå°éé»æ¨¡å¼')
     args = parser.parse_args()
     
     if args.once:

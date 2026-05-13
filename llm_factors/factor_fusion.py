@@ -418,3 +418,9 @@ if __name__ == '__main__':
               f"财务{info['fin_score']} 资金{info['fund_score']}) → {reason}")
     
     conn.close()
+
+# 导入补充函数
+try:
+    from qwen_bull_bear import get_qwen_bull_bear
+except ImportError:
+    pass
